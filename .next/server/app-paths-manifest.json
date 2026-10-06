@@ -1,0 +1,8 @@
+{
+  "/page": "app/page.js",
+  "/[slug]/page": "app/[slug]/page.js",
+  "/dich-vu-xe-ghep/page": "app/dich-vu-xe-ghep/page.js",
+  "/taxi-duong-dai/page": "app/taxi-duong-dai/page.js",
+  "/dang-ky-doi-tac/page": "app/dang-ky-doi-tac/page.js",
+  "/dat-xe/page": "app/dat-xe/page.js"
+}

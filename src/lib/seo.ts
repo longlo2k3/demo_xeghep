@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-export const SITE_DOMAIN = "https://xeghephanoi.vn";
-export const BRAND_NAME = "Xe Ghép Lubi";
-export const DEFAULT_OG_IMAGE = `${SITE_DOMAIN}/images/og-xeghep-vinfast.webp`;
+export const SITE_DOMAIN = "https://xegheplientinh.vn";
+export const BRAND_NAME = "Xe Ghép Liên Tỉnh";
+export const DEFAULT_OG_IMAGE = `${SITE_DOMAIN}/images/og-xe-ghep-lien-tinh.webp`;
 
 export interface PageMetadataInput {
   title: string;

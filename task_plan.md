@@ -140,3 +140,18 @@ c:\Users\LongVi\OneDrive\Desktop\TestSEO/
 - [x] 5.3 Audit raw HTML output: Title, Description, Canonical, H1, Schema JSON-LD, Link crawlability (Verified)
 - [x] 5.4 Two-stage review (Spec conformance + Code quality: PASSED)
 - [x] 5.5 Update progress and report to user
+
+### Phase 7: Full Implementation of spec_v2.md (Xe Ghép Liên Tỉnh)
+- [x] 7.1 Update findings.md and task_plan.md with spec_v2 requirements
+- [x] 7.2 Update data layer: `src/data/company-info.ts` (Brand: Xe Ghép Liên Tỉnh, Hotline: 0962.298.293, Email: xegheplientinhvip@gmail.com, Fanpage: Xe Ghép Bắc Giang - Bắc Ninh - Hải Phòng, 6 commitments) and `src/data/routes.ts` (9 routes with /tuyen-lien-tinh/[slug] paths and exact pricing tiers)
+- [x] 7.3 Update SEO core: `src/lib/seo.ts` (SITE_DOMAIN: https://xegheplientinh.vn, BRAND_NAME: Xe Ghép Liên Tỉnh) and `src/lib/schema.ts` (Hotline: +84962298293, organization & route services)
+- [x] 7.4 Update layout components: `Header.tsx` (Logo + hotline, 5 menu items + 9 dropdown submenus, red call button), `TopBanner.tsx` (Dòng 1 & 2), `FloatingContact.tsx` (Nút tròn trái, pill Gọi ngay phải), `Footer.tsx` (4 columns per spec_v2), `layout.tsx`
+- [x] 7.5 Implement Homepage (`src/app/page.tsx`): Section 1 (Banner Bảng Giá Các Tuyến Chính - 7 ô tuyến), Section 2 (Hero: H1 XE GHÉP LIÊN TỈNH + Sub + Nút đỏ), Section 3 (BookingForm trực tuyến), Section 4 (Bảng Giá Xe Ghép 9 RouteCard), Section 5 (WhyChooseUs nền vàng), Section 6 (IntroTeaser)
+- [x] 7.6 Implement `/tuyen-lien-tinh/page.tsx` (Bộ lọc nhanh tab + 9 cards) and `/tuyen-lien-tinh/[slug]/page.tsx` (Hero, PriceTable, Pickup/Dropoff, BookingForm, SEO content, FAQ, Related routes)
+- [x] 7.7 Implement `/gioi-thieu/page.tsx` (7 sections per spec_v2) and `/lien-he/page.tsx` (Hotline, email, fanpage, contact form, booking form)
+- [x] 7.8 Implement policy pages: `/chinh-sach/thanh-toan/page.tsx`, `/chinh-sach/dam-bao/page.tsx`, `/chinh-sach/bao-mat/page.tsx`
+- [x] 7.9 Update `/tin-tuc/page.tsx` & `/tin-tuc/[slug]/page.tsx` to match Xe Ghép Liên Tỉnh & hotline
+- [x] 7.10 Update `sitemap.ts`, `robots.ts`, and redirects in `next.config.ts`
+- [x] 7.11 Update unit tests in `tests/*.test.ts` to match spec_v2
+- [x] 7.12 Run `npm test` & `npm run build` and verify raw HTML output
+

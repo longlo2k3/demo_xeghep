@@ -26,7 +26,7 @@ export interface ArticleSchemaInput {
 
 /**
  * Builds the master Organization and TaxiService Schema.org @graph definition
- * Accurately represents Lubi Vietnam (xeghephanoi.vn)
+ * Accurately represents Xe Ghép Liên Tỉnh (xegheplientinh.vn) based on spec_v2.md
  */
 export function buildGlobalBusinessSchema() {
   return {
@@ -35,19 +35,19 @@ export function buildGlobalBusinessSchema() {
       {
         "@type": "Organization",
         "@id": `${SITE_DOMAIN}/#organization`,
-        name: "Công ty Cổ phần Đầu tư Lubi Việt Nam",
+        name: "Xe Ghép Liên Tỉnh",
         alternateName: BRAND_NAME,
         url: SITE_DOMAIN,
         logo: {
           "@type": "ImageObject",
-          url: `${SITE_DOMAIN}/images/logo-lubi.png`,
+          url: `${SITE_DOMAIN}/images/logo-xe-ghep-lien-tinh.png`,
           width: 512,
           height: 512,
         },
         contactPoint: [
           {
             "@type": "ContactPoint",
-            telephone: "+84858911247",
+            telephone: "+84962298293",
             contactType: "customer service",
             areaServed: "VN",
             availableLanguage: ["Vietnamese"],
@@ -57,31 +57,25 @@ export function buildGlobalBusinessSchema() {
       {
         "@type": "TaxiService",
         "@id": `${SITE_DOMAIN}/#taxiservice`,
-        name: "Dịch Vụ Xe Ghép Lubi Hà Nội",
-        serviceType: "Dịch vụ xe ghép liên tỉnh & Taxi đón tiễn sân bay Nội Bài",
+        name: "Dịch Vụ Xe Ghép Liên Tỉnh",
+        serviceType:
+          "Dịch vụ xe ghép, xe tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang",
         provider: {
           "@id": `${SITE_DOMAIN}/#organization`,
         },
         areaServed: [
+          { "@type": "City", name: "Hải Phòng" },
           { "@type": "City", name: "Hà Nội" },
-          { "@type": "AdministrativeArea", name: "Ninh Bình" },
-          { "@type": "AdministrativeArea", name: "Quảng Ninh" },
-          { "@type": "AdministrativeArea", name: "Hải Phòng" },
-          { "@type": "AdministrativeArea", name: "Thái Bình" },
-          { "@type": "AdministrativeArea", name: "Hưng Yên" },
-          { "@type": "AdministrativeArea", name: "Phú Thọ" },
+          { "@type": "City", name: "Hạ Long" },
+          { "@type": "City", name: "Móng Cái" },
           { "@type": "AdministrativeArea", name: "Bắc Ninh" },
+          { "@type": "AdministrativeArea", name: "Bắc Giang" },
+          { "@type": "AdministrativeArea", name: "Hải Dương" },
+          { "@type": "AdministrativeArea", name: "Thái Nguyên" },
         ],
         hoursAvailable: "Mo-Su 00:00-24:00",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "Tầng 2, Chung cư Xuân Mai Tower, Đường Tô Hiệu",
-          addressLocality: "Quận Hà Đông",
-          addressRegion: "Hà Nội",
-          addressCountry: "VN",
-        },
-        telephone: "+84858911247",
-        priceRange: "110.000đ - 1.200.000đ",
+        telephone: "+84962298293",
+        priceRange: "150.000đ - 2.500.000đ",
       },
       {
         "@type": "WebSite",
@@ -131,7 +125,7 @@ export function buildRouteServiceSchema({
         "@id": `${SITE_DOMAIN}${path}#service`,
         name,
         description,
-        serviceType: "Xe ghép liên tỉnh",
+        serviceType: "Xe ghép liên tỉnh & Bao xe tiện chuyến",
         provider: {
           "@id": `${SITE_DOMAIN}/#organization`,
         },
@@ -184,7 +178,7 @@ export function buildArticleSchema({
         publisher: {
           "@id": `${SITE_DOMAIN}/#organization`,
         },
-        image: imageUrl || `${SITE_DOMAIN}/images/og-xeghep-vinfast.webp`,
+        image: imageUrl || `${SITE_DOMAIN}/images/og-xe-ghep-lien-tinh.webp`,
       },
     ],
   };

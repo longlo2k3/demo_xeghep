@@ -5,6 +5,13 @@ export interface Commitment {
   iconName: string;
 }
 
+export interface PaymentMethod {
+  id: string;
+  title: string;
+  description: string;
+  iconName: string;
+}
+
 export interface Testimonial {
   id: string;
   author: string;
@@ -15,99 +22,125 @@ export interface Testimonial {
 }
 
 export const COMPANY_INFO = {
-  name: "Công ty Cổ phần Đầu tư Lubi Việt Nam",
-  brandName: "Xe Ghép Lubi",
-  hotline: "0858.911.247",
-  hotlineHref: "tel:0858911247",
-  zaloHref: "https://zalo.me/0858911247",
-  smsHref: "sms:0858911247",
-  messengerHref: "https://m.me/xeghephanoilubi",
-  address: "Tầng 2, Chung cư Xuân Mai Tower, Đường Tô Hiệu, Phường Hà Cầu, Quận Hà Đông, Hà Nội",
-  workingHours: "Phục vụ 24/7 (Cả ngày lễ và Chủ nhật)",
-  fleetDescription: "100% Xe điện VinFast cao cấp (VF5, VFe34, VF8, VF9) & dòng xe 7 - 16 chỗ",
-  bookingPromise: "Xác nhận cuốc xe trong 5 phút qua Zalo hoặc Hotline",
+  name: "Xe Ghép Liên Tỉnh",
+  brandName: "Xe Ghép Liên Tỉnh",
+  hotline: "0962.298.293",
+  hotlineRaw: "0962298293",
+  hotlineHref: "tel:0962298293",
+  zaloHref: "https://zalo.me/0962298293",
+  smsHref: "sms:0962298293",
+  email: "xegheplientinhvip@gmail.com",
+  website: "https://xegheplientinh.vn",
+  domainName: "xegheplientinh.vn",
+  fanpage: "Xe Ghép Bắc Giang - Bắc Ninh - Hải Phòng",
+  fanpageUrl: "https://www.facebook.com/xeghepbacgiangbacninhhaiphong",
+  topBannerLine1: "XE GHÉP: MÓNG CÁI - HẠ LONG - HẢI PHÒNG - BẮC NINH - BẮC GIANG - HÀ NỘI",
+  topBannerLine2: "ĐẶT XE LIÊN HỆ NGAY: 0962.298.293",
+  coverage: "Móng Cái – Hạ Long – Hải Phòng – Bắc Ninh – Bắc Giang – Hà Nội",
+  workingHours: "Phục vụ 24/7 (Cả ngày lẫn đêm, các ngày lễ tết)",
+  fleetDescription: "100% xe riêng đời mới 4, 5, 7 chỗ, điều hòa mát lạnh, sạch sẽ, bảo dưỡng định kỳ",
+  bookingPromise: "Giá rõ ràng đã bao gồm cầu đường bến bãi – Đưa đón tận nhà – Miễn phí hủy chuyến",
+  summary:
+    "Dịch vụ xe ghép, xe tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang. Xe chạy thẳng, nhanh, giá rõ ràng, đón trả tận nơi, phục vụ 24/7.",
 };
 
-export const FIVE_COMMITMENTS: Commitment[] = [
+export const SIX_COMMITMENTS: Commitment[] = [
   {
-    id: "cam-ket-xe-dien",
-    title: "100% Xe Điện VinFast",
-    description: "Toàn bộ xe dưới 7 chỗ là dòng xe điện VinFast VF5, VFe34, VF8 đời mới, vận hành êm ái, không mùi xăng xe.",
-    iconName: "Zap",
+    id: "cam-ket-hoan-tien",
+    title: "Cam kết hoàn tiền 100%",
+    description:
+      "Chúng tôi cam kết 100% hoàn tiền nếu xe không đảm bảo chất lượng chuyến đi của quý khách.",
+    iconName: "ShieldCheck",
   },
   {
-    id: "cam-ket-gia-tron-goi",
-    title: "Giá Trọn Gói Minh Bạch",
-    description: "Chi phí báo trước chuẩn xác, không tăng giá giờ cao điểm, không phát sinh phụ phí ẩn.",
-    iconName: "BadgePercent",
-  },
-  {
-    id: "cam-ket-don-tra-tan-noi",
-    title: "Đón Trả Tận Nơi",
-    description: "Đón tại nhà/sảnh chung cư và trả đúng điểm yêu cầu. Tối đa chỉ đón ghép 2 điểm nhằm tối ưu thời gian.",
+    id: "cam-ket-don-tan-nha",
+    title: "Đưa đón tận nhà",
+    description:
+      "Phục vụ đưa đón tận nhà cả 2 chiều, tối ưu lộ trình và giảm tối đa chi phí đi lại cho khách hàng.",
     iconName: "MapPin",
   },
   {
-    id: "cam-ket-xe-sach-se",
-    title: "Xe Mới Sạch Sẽ",
-    description: "Xe được vệ sinh khử khuẩn sau mỗi lượt chạy, không gian nội thất thoáng mát, máy lạnh thơm tho.",
-    iconName: "Sparkles",
+    id: "cam-ket-lai-xe-chuyen-nghiep",
+    title: "Lái xe dày dạn kinh nghiệm",
+    description:
+      "Đội ngũ lái xe chuyên nghiệp, nhiệt tình, nhiều năm kinh nghiệm lái xe đường trường an toàn.",
+    iconName: "Users",
   },
   {
-    id: "cam-ket-tai-xe-chuyen-nghiep",
-    title: "Lái Xe Lịch Sự & Đúng Giờ",
-    description: "Bác tài nhiều năm kinh nghiệm lái xe đường trường, phong cách phục vụ nhã nhặn, cam kết đón đúng giờ hẹn.",
-    iconName: "ShieldCheck",
+    id: "cam-ket-gia-tot-nhat",
+    title: "Mức giá tốt nhất",
+    description:
+      "Luôn cam kết với mức giá tốt nhất cho khách hàng, minh bạch không phát sinh phụ phí vô lý.",
+    iconName: "BadgePercent",
+  },
+  {
+    id: "cam-ket-mien-phi-huy",
+    title: "Miễn phí hủy chuyến",
+    description:
+      "Miễn phí hủy chuyến khi khách hàng có sự thay đổi lộ trình hoặc công việc phát sinh đột xuất.",
+    iconName: "Clock",
+  },
+  {
+    id: "cam-ket-den-200",
+    title: "Đền 200% chất lượng dịch vụ",
+    description:
+      "Chính sách hoàn lại tiền 100% và đền 200% nếu dịch vụ không đúng như cam kết và thỏa thuận.",
+    iconName: "Award",
+  },
+];
+
+export const FIVE_COMMITMENTS = SIX_COMMITMENTS;
+
+export const PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    id: "tien-mat",
+    title: "Tiền mặt trực tiếp",
+    description: "Thanh toán bằng tiền mặt cho tài xế sau khi chuyến đi hoàn thành an toàn.",
+    iconName: "Banknote",
+  },
+  {
+    id: "chuyen-khoan",
+    title: "Chuyển khoản trực tuyến",
+    description: "Chuyển khoản qua Internet Banking / quét mã QR sau chuyến đi hoặc khi đặt cọc bao xe.",
+    iconName: "CreditCard",
   },
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: "review-1",
-    author: "Anh Nguyễn Văn Thành",
-    location: "TP. Ninh Bình",
-    content: "Tôi thường xuyên đi Hà Nội - Ninh Bình công tác. Đi xe điện VinFast VF8 của Lubi rất êm, bác tài chạy cẩn thận, đón tận cổng cơ quan đúng 7h sáng.",
+    author: "Anh Nguyễn Tuấn Anh",
+    location: "Bắc Ninh",
+    content:
+      "Đi từ KCN Quế Võ về Hải Phòng công tác thường xuyên, giá ghép chỉ 400k - 500k mà xe đón tận sảnh, chỉ 1-2 khách trên xe rất thoáng đãng.",
     rating: 5,
-    avatarText: "VT",
+    avatarText: "TA",
   },
   {
     id: "review-2",
     author: "Chị Hoàng Mai Lan",
-    location: "Cầu Giấy, Hà Nội",
-    content: "Đặt xe đi sân bay Nội Bài lúc 4h sáng mà bác tài đến trước 10 phút đợi ở sảnh. Giá báo 200k đã bao gồm vé cầu đường sân bay, không vẽ vời thêm phí.",
+    location: "Móng Cái, Quảng Ninh",
+    content:
+      "Tuyến Móng Cái đi Hà Nội chạy cao tốc rất nhanh, tài xế lái cẩn thận, xe 7 chỗ sạch sẽ. Gửi hàng bưu phẩm cũng rất uy tín chỉ từ 150k.",
     rating: 5,
     avatarText: "ML",
   },
   {
     id: "review-3",
-    author: "Bác Trần Quốc Tuấn",
+    author: "Bác Lê Văn Thắng",
     location: "Hạ Long, Quảng Ninh",
-    content: "Nhà có người già nên sợ mùi xăng xe khách. Đi xe ghép điện của Lubi thoáng mát và không bị say xe chút nào. Bác tài hỗ trợ mang hành lý rất chu đáo.",
+    content:
+      "Bao xe 5 chỗ sang Bắc Giang ăn cưới trọn gói 900k, xe riêng đời mới, bác tài nhiệt tình chu đáo, đúng giờ.",
     rating: 5,
-    avatarText: "QT",
+    avatarText: "VT",
   },
   {
     id: "review-4",
-    author: "Bạn Lê Thu Trang",
-    location: "TP. Thái Bình",
-    content: "Giá ghép xe chỉ 300k mà xe đón tận nhà, ngồi thoải mái không phải chịu cảnh chen chúc hay dừng bắt khách dọc đường như xe khách.",
+    author: "Chị Đỗ Thu Trang",
+    location: "Hà Nội",
+    content:
+      "Đặt xe đi sân bay Nội Bài và Hải Phòng được tổng đài hỗ trợ nhanh chóng, cam kết hoàn tiền và xe riêng không mùi làm tôi rất an tâm.",
     rating: 5,
     avatarText: "TT",
-  },
-  {
-    id: "review-5",
-    author: "Anh Vũ Đức Đạt",
-    location: "Hải Phòng",
-    content: "Bao trọn xe VF8 đi Hải Phòng gặp đối tác rất sang trọng và lịch sự. Xuất hóa đơn VAT đầy đủ cho công ty, phục vụ chuyên nghiệp.",
-    rating: 5,
-    avatarText: "DD",
-  },
-  {
-    id: "review-6",
-    author: "Chị Đỗ Thu Hoài",
-    location: "Việt Trì, Phú Thọ",
-    content: "Đi khám bệnh ở bệnh viện Bạch Mai về Phú Thọ đón tận cổng viện, xe chạy thẳng cao tốc nhanh và an toàn. Rất hài lòng về dịch vụ Lubi.",
-    rating: 5,
-    avatarText: "TH",
   },
 ];

@@ -19,9 +19,9 @@ describe("Schema.org JSON-LD Builders", () => {
     const website = graph.find((item) => item["@type"] === "WebSite");
 
     expect(org).toBeDefined();
-    expect(org?.name).toContain("Lubi");
+    expect(org?.name).toBe("Xe Ghép Liên Tỉnh");
     expect(taxiService).toBeDefined();
-    expect(taxiService?.telephone).toBe("+84858911247");
+    expect(taxiService?.telephone).toBe("+84962298293");
     expect(website).toBeDefined();
     expect(website?.url).toBe(SITE_DOMAIN);
   });
@@ -29,35 +29,35 @@ describe("Schema.org JSON-LD Builders", () => {
   it("buildBreadcrumbSchema creates valid BreadcrumbList", () => {
     const breadcrumbs = buildBreadcrumbSchema([
       { name: "Trang chủ", path: "/" },
-      { name: "Dịch vụ xe ghép", path: "/dich-vu-xe-ghep" },
-      { name: "Ninh Bình", path: "/xe-ghep-ninh-binh" },
+      { name: "Các tuyến liên tỉnh", path: "/tuyen-lien-tinh" },
+      { name: "Hải Phòng - Hà Nội", path: "/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai" },
     ]);
 
     expect(breadcrumbs["@type"]).toBe("BreadcrumbList");
     expect(breadcrumbs.itemListElement).toHaveLength(3);
     expect(breadcrumbs.itemListElement[0].position).toBe(1);
-    expect(breadcrumbs.itemListElement[2].item).toBe(`${SITE_DOMAIN}/xe-ghep-ninh-binh`);
+    expect(breadcrumbs.itemListElement[2].item).toBe(`${SITE_DOMAIN}/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai`);
   });
 
   it("buildRouteServiceSchema outputs honest price Offer matching visible text", () => {
     const service = buildRouteServiceSchema({
-      name: "Xe Ghép Hà Nội - Ninh Bình",
+      name: "Hải Phòng ⇄ Hà Nội ⇄ Nội Bài",
       description: "Xe ghép đón trả tận nhà",
-      priceFrom: 300000,
-      origin: "Hà Nội",
-      destination: "Ninh Bình",
-      path: "/xe-ghep-ninh-binh",
+      priceFrom: 400000,
+      origin: "Hải Phòng",
+      destination: "Hà Nội",
+      path: "/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai",
     });
 
     const s = service["@graph"][0];
     expect(s["@type"]).toBe("Service");
-    expect(s.offers.price).toBe("300000");
+    expect(s.offers.price).toBe("400000");
     expect(s.offers.priceCurrency).toBe("VND");
   });
 
   it("buildArticleSchema sets valid Article metadata", () => {
     const article = buildArticleSchema({
-      title: "Kinh nghiệm đặt xe",
+      title: "Kinh nghiệm đặt xe ghép liên tỉnh",
       description: "Mô tả bài viết",
       path: "/tin-tuc/kinh-nghiem-dat-xe",
       datePublished: "2026-03-20T10:00:00+07:00",
@@ -65,7 +65,7 @@ describe("Schema.org JSON-LD Builders", () => {
 
     const a = article["@graph"][0];
     expect(a["@type"]).toBe("Article");
-    expect(a.headline).toBe("Kinh nghiệm đặt xe");
+    expect(a.headline).toBe("Kinh nghiệm đặt xe ghép liên tỉnh");
     expect(a.inLanguage).toBe("vi-VN");
   });
 });

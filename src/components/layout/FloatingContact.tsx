@@ -1,126 +1,53 @@
 "use client";
 
-import Link from "next/link";
-import { Phone, MessageSquare, Send, CalendarCheck, MessageCircle } from "lucide-react";
+import { Phone } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
 
 export function FloatingContact() {
   return (
-    <>
-      {/* Mobile Floating Bar: Fixed bottom dock (Touch targets >= 44px) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-2xl px-2 py-2 flex items-center justify-around">
-        <a
-          href={COMPANY_INFO.hotlineHref}
-          className="flex flex-col items-center justify-center p-1 text-red-600 hover:text-red-700 min-w-[54px] min-h-[44px]"
-          aria-label="Gọi điện tổng đài hotline 24/7"
-        >
-          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center mb-0.5">
-            <Phone className="w-4 h-4 text-red-600 animate-bounce" aria-hidden="true" />
-          </div>
-          <span className="text-[11px] font-bold">Gọi điện</span>
-        </a>
+    <div className="fixed bottom-6 right-4 sm:right-6 z-50 flex flex-col items-center gap-3">
+      {/* Nút nổi Zalo */}
+      <a
+        href={COMPANY_INFO.zaloHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#0068FF] text-white shadow-2xl hover:bg-[#0052cc] hover:scale-110 active:scale-95 transition-all duration-200 group"
+        aria-label="Chat Zalo ngay"
+      >
+        <span
+          className="absolute inset-0 rounded-full bg-[#0068FF] animate-ping opacity-35 pointer-events-none"
+          aria-hidden="true"
+        />
+        <span className="font-black text-xs sm:text-sm tracking-tight select-none">
+          Zalo
+        </span>
+        <span className="sr-only">Chat Zalo</span>
 
-        <a
-          href={COMPANY_INFO.zaloHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center p-1 text-blue-600 hover:text-blue-700 min-w-[54px] min-h-[44px]"
-          aria-label="Tư vấn Zalo 24/7"
-        >
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mb-0.5">
-            <MessageSquare className="w-4 h-4 text-blue-600" aria-hidden="true" />
-          </div>
-          <span className="text-[11px] font-bold">Zalo</span>
-        </a>
+        {/* Tooltip desktop */}
+        <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-slate-900/90 text-white text-xs font-bold shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none hidden sm:block">
+          Chat Zalo
+        </span>
+      </a>
 
-        <a
-          href={COMPANY_INFO.smsHref}
-          className="flex flex-col items-center justify-center p-1 text-emerald-600 hover:text-emerald-700 min-w-[54px] min-h-[44px]"
-          aria-label="Gửi tin nhắn SMS"
-        >
-          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center mb-0.5">
-            <Send className="w-4 h-4 text-emerald-600" aria-hidden="true" />
-          </div>
-          <span className="text-[11px] font-bold">SMS</span>
-        </a>
+      {/* Nút nổi Gọi điện (chuyển sang thay thế thanh hotline dài cũ) */}
+      <a
+        href={COMPANY_INFO.hotlineHref}
+        className="relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-red-600 text-white shadow-2xl hover:bg-red-700 hover:scale-110 active:scale-95 transition-all duration-200 group"
+        aria-label={`Gọi điện ngay ${COMPANY_INFO.hotline}`}
+      >
+        {/* Ripple animation rings */}
+        <span
+          className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40 pointer-events-none"
+          aria-hidden="true"
+        />
+        <Phone className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" aria-hidden="true" />
+        <span className="sr-only">Gọi ngay {COMPANY_INFO.hotline}</span>
 
-        <a
-          href={COMPANY_INFO.messengerHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center p-1 text-indigo-600 hover:text-indigo-700 min-w-[54px] min-h-[44px]"
-          aria-label="Nhắn tin Facebook Messenger"
-        >
-          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mb-0.5">
-            <MessageCircle className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-          </div>
-          <span className="text-[11px] font-bold">Messenger</span>
-        </a>
-
-        <Link
-          href="/dat-xe"
-          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold text-xs shadow-md"
-          aria-label="Đặt xe trực tuyến"
-        >
-          <CalendarCheck className="w-4 h-4" aria-hidden="true" />
-          <span>Đặt xe</span>
-        </Link>
-      </div>
-
-      {/* Desktop Floating Pills (Right Side) */}
-      <div className="hidden lg:flex fixed right-4 bottom-8 z-50 flex-col items-end gap-2.5">
-        <a
-          href={COMPANY_INFO.hotlineHref}
-          className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-x-1"
-          aria-label="Gọi điện tổng đài"
-        >
-          <span className="text-xs font-bold pl-1 hidden group-hover:inline transition-all">
-            Hotline: {COMPANY_INFO.hotline}
-          </span>
-          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-            <Phone className="w-4 h-4 text-white animate-pulse" aria-hidden="true" />
-          </div>
-        </a>
-
-        <a
-          href={COMPANY_INFO.zaloHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-x-1"
-          aria-label="Chat Zalo"
-        >
-          <span className="text-xs font-bold pl-1 hidden group-hover:inline transition-all">
-            Tư vấn Zalo 24/7
-          </span>
-          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-            <MessageSquare className="w-4 h-4 text-white" aria-hidden="true" />
-          </div>
-        </a>
-
-        <a
-          href={COMPANY_INFO.messengerHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-x-1"
-          aria-label="Chat Messenger"
-        >
-          <span className="text-xs font-bold pl-1 hidden group-hover:inline transition-all">
-            Messenger
-          </span>
-          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-            <MessageCircle className="w-4 h-4 text-white" aria-hidden="true" />
-          </div>
-        </a>
-
-        <Link
-          href="/dat-xe"
-          className="flex items-center gap-2 px-4 py-3 rounded-full bg-amber-500 hover:bg-amber-600 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-x-1 font-bold text-xs"
-          aria-label="Đặt xe trực tuyến ngay"
-        >
-          <CalendarCheck className="w-4 h-4" aria-hidden="true" />
-          <span>Đặt Xe Ngay</span>
-        </Link>
-      </div>
-    </>
+        {/* Tooltip desktop */}
+        <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-slate-900/90 text-white text-xs font-bold shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none hidden sm:block">
+          Gọi: {COMPANY_INFO.hotline}
+        </span>
+      </a>
+    </div>
   );
 }

@@ -11,6 +11,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/dich-vu-xe-ghep",
+        destination: "/tuyen-lien-tinh",
+        permanent: true,
+      },
+      {
+        source: "/bang-gia",
+        destination: "/tuyen-lien-tinh",
+        permanent: true,
+      },
+      {
+        source: "/taxi-dua-don-san-bay-noi-bai",
+        destination: "/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai",
+        permanent: true,
+      },
+      {
+        source: "/taxi-duong-dai",
+        destination: "/tuyen-lien-tinh",
+        permanent: true,
+      },
+      {
+        source: "/dang-ky-doi-tac",
+        destination: "/lien-he",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

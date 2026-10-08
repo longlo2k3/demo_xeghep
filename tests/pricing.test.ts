@@ -1,43 +1,50 @@
 import { describe, it, expect } from "vitest";
-import { POPULAR_ROUTES } from "../src/data/routes";
-import { AIRPORT_DISTRICT_PRICING } from "../src/data/airport-pricing";
-import { DISTANCE_RATES } from "../src/data/long-distance-pricing";
+import { POPULAR_ROUTES, BANNER_TOP_ROUTES } from "../src/data/routes";
 
-describe("Data Layer & Pricing Rules", () => {
-  it("POPULAR_ROUTES contains all 8 highlighted routes from Duan.md", () => {
+describe("Data Layer & Pricing Rules per spec_v2.md", () => {
+  it("POPULAR_ROUTES contains all 9 routes from spec_v2.md", () => {
     const slugs = POPULAR_ROUTES.map((r) => r.slug);
-    expect(slugs).toContain("xe-ghep-ninh-binh");
-    expect(slugs).toContain("xe-ghep-noi-bai");
-    expect(slugs).toContain("xe-ghep-quang-ninh");
-    expect(slugs).toContain("xe-ghep-thai-binh");
-    expect(slugs).toContain("xe-ghep-hai-phong");
-    expect(slugs).toContain("xe-ghep-hung-yen");
-    expect(slugs).toContain("xe-ghep-phu-tho");
-    expect(slugs).toContain("xe-ghep-bac-ninh");
+    expect(slugs).toHaveLength(9);
+    expect(slugs).toContain("hai-phong-bac-ninh-bac-giang");
+    expect(slugs).toContain("hai-phong-ha-noi-noi-bai");
+    expect(slugs).toContain("hai-phong-ha-long");
+    expect(slugs).toContain("hai-phong-mong-cai");
+    expect(slugs).toContain("ha-long-bac-ninh-bac-giang");
+    expect(slugs).toContain("ha-noi-mong-cai");
+    expect(slugs).toContain("ha-noi-ha-long");
+    expect(slugs).toContain("hai-phong-hai-duong");
+    expect(slugs).toContain("hai-phong-thai-nguyen");
   });
 
-  it("Each route has FAQs and positive pricing", () => {
+  it("Each route has detailed pricing tiers and metadata from spec_v2.md", () => {
     for (const route of POPULAR_ROUTES) {
       expect(route.priceFrom).toBeGreaterThan(0);
+      expect(route.priceShare1Text).toBeDefined();
+      expect(route.priceCharter4to5Text).toBeDefined();
+      expect(route.pricingDetails.length).toBeGreaterThan(0);
       expect(route.faqs.length).toBeGreaterThan(0);
       expect(route.pickups.length).toBeGreaterThan(0);
       expect(route.dropoffs.length).toBeGreaterThan(0);
     }
   });
 
-  it("AIRPORT_DISTRICT_PRICING contains standard Hanoi districts", () => {
-    const districts = AIRPORT_DISTRICT_PRICING.map((d) => d.district);
-    expect(districts).toContain("Quận Cầu Giấy");
-    expect(districts).toContain("Quận Hoàn Kiếm");
-    expect(districts).toContain("Quận Hà Đông");
-
-    const cauGiay = AIRPORT_DISTRICT_PRICING.find((d) => d.district === "Quận Cầu Giấy");
-    expect(cauGiay?.fromHanoiToAirport.sedan5Seats).toBe(190000);
-    expect(cauGiay?.roundTrip.sedan5Seats).toBe(390000);
+  it("Route Hải Phòng ⇄ Hà Nội ⇄ Nội Bài has exact prices matching spec_v2.md", () => {
+    const r = POPULAR_ROUTES.find((item) => item.slug === "hai-phong-ha-noi-noi-bai");
+    expect(r).toBeDefined();
+    expect(r?.priceShare1Text).toBe("400k");
+    expect(r?.priceShare2Text).toBe("700k");
+    expect(r?.priceCharter4to5Text).toBe("từ 899k");
+    expect(r?.priceCharter7Text).toBe("từ 999k");
   });
 
-  it("DISTANCE_RATES handles tiered distances", () => {
-    expect(DISTANCE_RATES.length).toBe(4);
-    expect(DISTANCE_RATES[0].sedan5Seats).toBe(11000);
+  it("BANNER_TOP_ROUTES contains the 7 key routes from spec_v2.md Section 1", () => {
+    expect(BANNER_TOP_ROUTES.length).toBe(7);
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("hai-phong-hai-duong");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("hai-phong-ha-long");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("hai-phong-thai-nguyen");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("hai-phong-mong-cai");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("ha-noi-mong-cai");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("ha-long-bac-ninh-bac-giang");
+    expect(BANNER_TOP_ROUTES.map((r) => r.slug)).toContain("hai-phong-ha-noi-noi-bai");
   });
 });

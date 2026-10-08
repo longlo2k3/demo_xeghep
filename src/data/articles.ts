@@ -15,105 +15,72 @@ export interface Article {
 
 export const ARTICLES: Article[] = [
   {
-    slug: "kinh-nghiem-dat-xe-ghep-ha-noi-tiet-kiem-va-an-toan",
-    title: "Kinh Nghiệm Đặt Xe Ghép Hà Nội Đi Các Tỉnh: Tiết Kiệm & An Toàn Nhất 2026",
+    slug: "kinh-nghiem-dat-xe-ghep-lien-tinh-tiet-kiem",
+    title: "Kinh Nghiệm Đặt Xe Ghép Liên Tỉnh Tiết Kiệm, Nhanh Chóng và An Toàn",
     category: "kinh-nghiem",
     categoryName: "Kinh nghiệm đi xe",
     publishedAt: "2026-02-15T08:00:00+07:00",
     updatedAt: "2026-03-20T10:30:00+07:00",
-    author: "Ban Biên Tập Lubi",
-    excerpt: "Tổng hợp bí quyết chọn dịch vụ xe ghép đón trả tận nhà chất lượng, phân biệt xe dù với xe uy tín và cách tiết kiệm đến 50% chi phí di chuyển.",
-    image: "/images/xe-vinfast-vf8-noi-bai.webp",
+    author: "Ban Biên Tập Xe Ghép Liên Tỉnh",
+    excerpt: "Bí quyết đặt xe ghép tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang đón trả tận nhà, tiết kiệm chi phí và an tâm đổi hủy miễn phí.",
+    image: "/photo02.avif",
     tableOfContents: [
-      { id: "xe-ghep-la-gi", text: "1. Xe ghép là gì và vì sao ngày càng được ưa chuộng?" },
-      { id: "uu-diem-xe-dien", text: "2. Ưu thế vượt trội khi đi xe ghép điện VinFast" },
-      { id: "luu-y-khi-dat-xe", text: "3. 4 lưu ý quan trọng để không bị 'bỏ rơi' dọc đường" },
-      { id: "dat-xe-lubi", text: "4. Vì sao khách hàng tin tưởng dịch vụ Xe Ghép Lubi?" },
+      { id: "xe-ghep-la-gi", text: "1. Xe ghép liên tỉnh là gì?" },
+      { id: "uu-diem-xe-ghep", text: "2. Ưu điểm nổi bật của xe ghép liên tỉnh" },
+      { id: "bang-gia-tham-khao", text: "3. Giá cước các tuyến trọng điểm" },
+      { id: "luu-y-khi-dat-xe", text: "4. Lưu ý quan trọng khi đặt chuyến" },
     ],
     content: `
-      <p>Trong những năm gần đây, dịch vụ <strong>xe ghép liên tỉnh</strong> đã trở thành lựa chọn hàng đầu cho hàng triệu hành khách đi lại giữa Hà Nội và các tỉnh thành phía Bắc như Ninh Bình, Quảng Ninh, Hải Phòng, Thái Bình, Phú Thọ...</p>
+      <p>Trong những năm gần đây, dịch vụ <strong>xe ghép liên tỉnh</strong> đã trở thành xu hướng di chuyển tiện lợi hàng đầu kết nối các tỉnh thành trọng điểm như Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang.</p>
       
-      <h2 id="xe-ghep-la-gi">1. Xe ghép là gì và vì sao ngày càng được ưa chuộng?</h2>
-      <p>Xe ghép là hình thức nhiều hành khách có cùng lộ trình di chuyển chia sẻ chung một chuyến xe du lịch từ 5 đến 7 chỗ. Khác với xe khách truyền thống phải ra bến bãi đông đúc, xe ghép đón và trả khách tận nơi tại cửa nhà hoặc địa chỉ yêu cầu.</p>
-      <p>Chi phí cho một ghế xe ghép thường chỉ dao động từ 150.000đ đến 300.000đ, rẻ hơn rất nhiều so với việc bao trọn một chuyến taxi riêng (thường từ 800.000đ đến 1.500.000đ).</p>
+      <h2 id="xe-ghep-la-gi">1. Xe ghép liên tỉnh là gì?</h2>
+      <p>Xe ghép là hình thức chia sẻ không gian trên cùng một chuyến xe ô tô 4, 5 hoặc 7 chỗ đời mới. Khác với xe khách truyền thống phải ra bến bãi đông đúc, xe ghép đón và trả khách tận nơi tại cửa nhà hoặc địa chỉ yêu cầu.</p>
+      <p>Mỗi chuyến xe tại Xe Ghép Liên Tỉnh chỉ nhận giới hạn từ 1 đến 3 khách để đảm bảo không gian rộng rãi, thoáng mát, xe chạy thẳng cao tốc không vòng vèo bắt khách.</p>
 
-      <h2 id="uu-diem-xe-dien">2. Ưu thế vượt trội khi đi xe ghép điện VinFast</h2>
-      <p>Lubi là một trong những đơn vị tiên phong ứng dụng 100% đội xe điện VinFast (VF5, VFe34, VF8) vào dịch vụ xe ghép. Điểm khác biệt lớn nhất là không gian xe luôn sạch sẽ, hoàn toàn không có mùi xăng dầu khó chịu - nỗi ám ảnh lớn nhất của người say xe.</p>
-      <p>Động cơ điện êm ái, cách âm vượt trội giúp hành khách có thể nghỉ ngơi, làm việc thoải mái suốt chuyến đi dài.</p>
-
-      <h2 id="luu-y-khi-dat-xe">3. 4 lưu ý quan trọng để không bị 'bỏ rơi' dọc đường</h2>
+      <h2 id="uu-diem-xe-ghep">2. Ưu điểm nổi bật của xe ghép liên tỉnh</h2>
       <ul>
-        <li><strong>Đặt xe trước ít nhất 1-2 tiếng:</strong> Giúp điều hành xe sắp xếp lộ trình đón ghép tối ưu, không bị muộn giờ.</li>
-        <li><strong>Xác nhận rõ giá cước trọn gói:</strong> Hỏi rõ chi phí đã bao gồm vé cầu đường cao tốc và đón tận ngõ chưa.</li>
-        <li><strong>Chọn đơn vị có pháp nhân rõ ràng:</strong> Tránh đặt qua các nhóm Zalo trôi nổi không rõ nguồn gốc lái xe.</li>
-        <li><strong>Cung cấp số lượng hành lý:</strong> Giúp tài xế bố trí khoang cốp phù hợp.</li>
+        <li><strong>Chỉ 1–3 khách/chuyến:</strong> Tuyệt đối không nhồi nhét, chỗ ngồi êm ái rộng rãi.</li>
+        <li><strong>Xuất phát nhanh chóng:</strong> Xe chạy thẳng đường cao tốc, không bắt khách dọc đường.</li>
+        <li><strong>Giá rõ ràng trọn gói:</strong> Đã bao gồm vé cầu đường bến bãi, không có phụ phí ẩn.</li>
+        <li><strong>100% xe đời mới:</strong> Điều hòa mát lạnh, sạch sẽ không mùi.</li>
+        <li><strong>Đón trả tận nơi 24/7:</strong> Phục vụ 2 chiều cả ngày lẫn đêm.</li>
       </ul>
 
-      <h2 id="dat-xe-lubi">4. Vì sao khách hàng tin tưởng dịch vụ Xe Ghép Lubi?</h2>
-      <p>Với cam kết không tăng giá giờ cao điểm, đội ngũ lái xe lịch sự và tổng đài phục vụ 24/7 qua hotline <strong>0858.911.247</strong>, Xe Ghép Lubi tự hào mang lại trải nghiệm di chuyển văn minh, tin cậy cho mọi nhà.</p>
+      <h2 id="bang-gia-tham-khao">3. Giá cước các tuyến trọng điểm</h2>
+      <p>Mức giá ghép 1 khách chỉ từ 250k - 600k tùy tuyến. Quý khách vui lòng tham khảo chi tiết tại mục Các tuyến liên tỉnh của chúng tôi.</p>
+
+      <h2 id="luu-y-khi-dat-xe">4. Lưu ý quan trọng khi đặt chuyến</h2>
+      <p>Để chuyến đi diễn ra thuận lợi, quý khách nên đặt xe trước 30 phút - 1 tiếng hoặc liên hệ tổng đài 24/7 qua hotline <strong>0962.298.293</strong>.</p>
     `,
-    relatedRouteSlug: "xe-ghep-ninh-binh",
+    relatedRouteSlug: "hai-phong-ha-noi-noi-bai",
   },
   {
-    slug: "bang-gia-xe-dua-don-san-bay-noi-bai-chi-tiet",
-    title: "Bảng Giá Taxi Đưa Đón Sân Bay Nội Bài Trọn Gói 2026: Không Phát Sinh Phí",
+    slug: "bang-gia-xe-ghep-lien-tinh-moi-nhat-2026",
+    title: "Bảng Giá Xe Ghép Liên Tỉnh Mới Nhất 2026: 9 Tuyến Trọng Điểm Miền Bắc",
     category: "tin-tuyen",
     categoryName: "Tin tuyến & Báo giá",
     publishedAt: "2026-03-01T09:00:00+07:00",
     updatedAt: "2026-03-25T14:00:00+07:00",
-    author: "Phòng Vận Hành Lubi",
-    excerpt: "Cập nhật bảng giá taxi đưa đón sân bay Nội Bài 24/7 theo từng quận Hà Nội. Giá đã gồm vé vào cổng sân bay, theo dõi chuyến bay đón đúng sảnh.",
-    image: "/images/xe-vinfast-vf8-noi-bai.webp",
+    author: "Phòng Điều Hành Xe Ghép Liên Tỉnh",
+    excerpt: "Bảng giá niêm yết 9 tuyến xe ghép liên tỉnh Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang, Hải Dương, Thái Nguyên.",
+    image: "/photo01.avif",
     tableOfContents: [
-      { id: "tong-quan-noi-bai", text: "1. Bảng giá taxi Nội Bài trọn gói theo quận" },
-      { id: "chinh-sach-don-tiem", text: "2. Quy trình đón tiễn sân bay chuyên nghiệp" },
-      { id: "cam-ket-khong-phat-sinh", text: "3. Cam kết vé cổng và thời gian chờ chuyến bay" },
+      { id: "tong-quan-bang-gia", text: "1. Bảng giá các tuyến xe ghép chính" },
+      { id: "dich-vu-gui-hang", text: "2. Dịch vụ gửi hàng hỏa tốc từ 150k" },
+      { id: "chinh-sach-doi-huy", text: "3. Chính sách hoàn tiền và đổi hủy miễn phí" },
     ],
     content: `
-      <p>Nhu cầu di chuyển giữa trung tâm Hà Nội và Cảng Hàng không Quốc tế Nội Bài luôn ở mức cao bất kể ngày đêm. Để chuyến đi không bị gián đoạn hay bực bội vì giá cả mập mờ, Lubi công khai bảng giá trọn gói niêm yết.</p>
+      <p>Xe Ghép Liên Tỉnh xin gửi tới quý khách bảng giá niêm yết công khai trên 9 tuyến di chuyển chính, áp dụng cho xe riêng 4, 5 và 7 chỗ đời mới phục vụ 24/7.</p>
 
-      <h2 id="tong-quan-noi-bai">1. Bảng giá taxi Nội Bài trọn gói theo quận</h2>
-      <p>Mức giá từ các quận Cầu Giấy, Ba Đình, Tây Hồ đi Nội Bài chỉ từ 180.000đ - 190.000đ cho xe 5 chỗ VinFast. Chiều đón từ Nội Bài về Hà Nội chỉ từ 230.000đ - 250.000đ.</p>
-      <p>Đặc biệt với gói đặt xe 2 chiều khứ hồi trong ngày, khách hàng được giảm ngay tới 30%, trọn gói chỉ từ 380.000đ.</p>
+      <h2 id="tong-quan-bang-gia">1. Bảng giá các tuyến xe ghép chính</h2>
+      <p>Mức giá ghép ghế chỉ từ 250k/khách. Bao xe riêng 4/5 chỗ chỉ từ 400k - 2.200k tùy cự ly lộ trình. Chi tiết niêm yết tại trang Các tuyến liên tỉnh.</p>
 
-      <h2 id="chinh-sach-don-tiem">2. Quy trình đón tiễn sân bay chuyên nghiệp</h2>
-      <p>Tài xế của Lubi luôn theo dõi thời gian hạ cánh thực tế qua mã hiệu chuyến bay của khách hàng (Flight Radar). Dù chuyến bay đến sớm hay delay nhiều giờ, tài xế luôn có mặt sẵn sàng tại sảnh đến mà không thu thêm phí chờ.</p>
+      <h2 id="dich-vu-gui-hang">2. Dịch vụ gửi hàng hỏa tốc từ 150k</h2>
+      <p>Bên cạnh đưa đón hành khách, chúng tôi cung cấp dịch vụ gửi hàng hóa, bưu phẩm, tài liệu hỏa tốc giá chỉ từ 150k trên tất cả các tuyến đường, giao nhận tận tay người nhận trong ngày.</p>
 
-      <h2 id="cam-ket-khong-phat-sinh">3. Cam kết vé cổng và thời gian chờ chuyến bay</h2>
-      <p>Toàn bộ mức giá đưa đón sân bay của Lubi đã bao gồm vé cổng sân bay T1/T2 và phí cầu đường Võ Nguyên Giáp. Khách hàng hoàn toàn yên tâm thanh toán đúng số tiền đã báo trước.</p>
+      <h2 id="chinh-sach-doi-huy">3. Chính sách hoàn tiền và đổi hủy miễn phí</h2>
+      <p>Cam kết hoàn tiền 100%, đền 200% nếu xe không đảm bảo chất lượng dịch vụ. Miễn phí đổi hoặc hủy chuyến khi quý khách thay đổi lịch trình.</p>
     `,
-    relatedRouteSlug: "xe-ghep-noi-bai",
-  },
-  {
-    slug: "chinh-sach-tuyen-doi-tac-lai-xe-lubi",
-    title: "Chính Sách Tuyển Dụng & Hợp Tác Đối Tác Lái Xe Ghép Lubi Thu Nhập Cao",
-    category: "khuyen-mai",
-    categoryName: "Chính sách đối tác",
-    publishedAt: "2026-03-10T11:00:00+07:00",
-    updatedAt: "2026-03-28T16:00:00+07:00",
-    author: "Phòng Phát Triển Mạng Lưới Lubi",
-    excerpt: "Chương trình gia nhập mạng lưới đối tác lái xe Lubi: Tận dụng thời gian rảnh, tối ưu chiều về không chạy rỗng, gia tăng thu nhập từ 15 - 35 triệu/tháng.",
-    image: "/images/xe-vinfast-vf8-noi-bai.webp",
-    tableOfContents: [
-      { id: "quyen-loi-doi-tac", text: "1. Quyền lợi khi hợp tác cùng Xe Ghép Lubi" },
-      { id: "dieu-kien-tham-gia", text: "2. Điều kiện tham gia đội xe" },
-      { id: "quy-trinh-dang-ky", text: "3. Quy trình đăng ký và kích hoạt tài khoản" },
-    ],
-    content: `
-      <p>Bạn đang sở hữu xe ô tô từ 5 đến 7 chỗ (đặc biệt là các dòng xe điện VinFast VF5, VF8)? Bạn muốn tối ưu các chuyến xe chiều về để không phải chạy xe không? Hãy tham gia mạng lưới tài xế đối tác của Công ty Cổ phần Đầu tư Lubi Việt Nam.</p>
-
-      <h2 id="quyen-loi-doi-tac">1. Quyền lợi khi hợp tác cùng Xe Ghép Lubi</h2>
-      <ul>
-        <li>Nguồn khách dồi dào, ổn định liên tục trên các trục tuyến liên tỉnh và sân bay.</li>
-        <li>Tỷ lệ chiết khấu hợp tác cạnh tranh, thanh toán minh bạch, nhanh chóng.</li>
-        <li>Được hỗ trợ đào tạo nghiệp vụ chăm sóc khách hàng và quy chuẩn đón tiễn văn minh.</li>
-      </ul>
-
-      <h2 id="dieu-kien-tham-gia">2. Điều kiện tham gia đội xe</h2>
-      <p>Yêu cầu xe đời mới từ 2020 trở lên, nội ngoại thất sạch sẽ, đăng kiểm và bảo hiểm bắt buộc đầy đủ. Ưu tiên tài xế sử dụng xe điện VinFast và có thái độ phục vụ khách hàng nhã nhặn, đúng giờ.</p>
-
-      <h2 id="quy-trinh-dang-ky">3. Quy trình đăng ký và kích hoạt tài khoản</h2>
-      <p>Tài xế điền thông tin vào form tại trang <a href="/dang-ky-doi-tac">Đăng Ký Đối Tác</a> hoặc liên hệ trực tiếp hotline bộ phận tuyển dụng: <strong>0858.911.247</strong>.</p>
-    `,
+    relatedRouteSlug: "hai-phong-bac-ninh-bac-giang",
   },
 ];

@@ -1,9 +1,25 @@
-"use client";
-
-import { useState } from "react";
+import type { Metadata } from "next";
+import Image from "next/image";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { BookingForm } from "@/components/booking/BookingForm";
 import { COMPANY_INFO } from "@/data/company-info";
-import { MapPin, Phone, Clock, MessageSquare, Send, CheckCircle2, Mail } from "lucide-react";
+import { constructMetadata } from "@/lib/seo";
+import { Phone, Clock, MessageSquare, Mail, Globe } from "lucide-react";
+
+export const metadata: Metadata = constructMetadata({
+  title: "Liên Hệ Đặt Xe Ghép - Phục Vụ 24/7 Toàn Tuyến Liên Tỉnh",
+  description:
+    "Tổng đài liên hệ và đặt xe ghép liên tỉnh 24/7. Hỗ trợ đón trả tận nhà, bao xe riêng, gửi hàng hỏa tốc các tuyến Móng Cái – Hạ Long – Hải Phòng – Bắc Ninh – Bắc Giang – Hà Nội.",
+  path: "/lien-he",
+});
+
+function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  );
+}
 
 export default function ContactPage() {
   const breadcrumbs = [
@@ -11,222 +27,185 @@ export default function ContactPage() {
     { name: "Liên hệ", path: "/lien-he" },
   ];
 
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !phone) return;
-    setSubmitted(true);
-  };
-
   return (
     <>
       <Breadcrumbs items={breadcrumbs} />
 
       <div className="py-12 sm:py-16 bg-slate-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full inline-block mb-3">
-              Thông Tin Kết Nối
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Header & H1 per spec_v2.md Section 7 */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-red-700 bg-red-100 px-3.5 py-1 rounded-full inline-block">
+              Hỗ Trợ 24/7
             </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Liên Hệ Xe Ghép Lubi — Phục Vụ 24/7
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight uppercase">
+              Liên hệ
             </h1>
-            <p className="mt-3 text-base text-slate-600 leading-relaxed">
-              Quý khách có nhu cầu đặt xe, phản ánh chất lượng dịch vụ hoặc liên hệ hợp tác kinh doanh, vui lòng kết nối với chúng tôi qua các kênh dưới đây.
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              Tổng đài trực 24/7 giải đáp mọi thắc mắc, tiếp nhận đặt chuyến, ký
+              gửi hàng hóa và hỗ trợ đổi hủy chuyến miễn phí.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-16">
-            {/* Cột Trái: Thông tin liên hệ trực tiếp */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Cột Trái: Hotline, Email, Fanpage, Kênh gọi nhanh với Background letan.png làm mờ */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
-                <h2 className="text-xl font-bold text-slate-900 pb-2 border-b border-slate-100">
-                  Thông Tin Trụ Sở Chính
-                </h2>
-
-                <div className="space-y-5 text-sm text-slate-700">
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <strong className="block text-slate-900 font-bold mb-0.5">Địa chỉ văn phòng:</strong>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        {COMPANY_INFO.address}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <strong className="block text-slate-900 font-bold mb-0.5">Hotline Tổng Đài 24/7:</strong>
-                      <a
-                        href={COMPANY_INFO.hotlineHref}
-                        className="text-base sm:text-lg font-black text-amber-600 hover:underline block"
-                      >
-                        {COMPANY_INFO.hotline}
-                      </a>
-                      <span className="text-xs text-slate-500">Hỗ trợ cuộc gọi thường & Zalo</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <strong className="block text-slate-900 font-bold mb-0.5">Thời gian hoạt động:</strong>
-                      <p className="text-xs sm:text-sm text-slate-600">
-                        {COMPANY_INFO.workingHours}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <strong className="block text-slate-900 font-bold mb-0.5">Email liên hệ:</strong>
-                      <p className="text-xs sm:text-sm text-slate-600">
-                        contact@xeghephanoi.vn
-                      </p>
-                    </div>
-                  </div>
+              <div className="relative rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-8 space-y-6 overflow-hidden">
+                {/* Background image letan.png rõ nét, làm mờ quang học và có lớp phủ để chữ nổi bật */}
+                <div
+                  className="absolute inset-0 pointer-events-none select-none overflow-hidden"
+                  aria-hidden="true"
+                >
+                  <Image
+                    src="/letan.png"
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover object-center filter blur-[2px] scale-105"
+                  />
+                  {/* Lớp phủ sáng mờ trong suốt để ảnh nền hiện rõ nhưng text vẫn đọc được dễ dàng */}
+                  <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px]" />
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex gap-3">
-                  <a
-                    href={COMPANY_INFO.zaloHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs text-center flex items-center justify-center gap-2 shadow-sm"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Nhắn Tin Zalo</span>
-                  </a>
+                <div className="relative z-10 space-y-6">
+                  <h2 className="text-xl font-black text-slate-900 pb-2 border-b border-slate-300/80 uppercase">
+                    Thông Tin Liên Hệ
+                  </h2>
 
-                  <a
-                    href={COMPANY_INFO.hotlineHref}
-                    className="flex-1 py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs text-center flex items-center justify-center gap-2 shadow-sm"
-                  >
-                    <Phone className="w-4 h-4" />
-                    <span>Gọi Ngay</span>
-                  </a>
+                  <div className="space-y-3.5 text-sm text-slate-900">
+                    <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        <Phone className="w-5 h-5 animate-pulse" />
+                      </div>
+                      <div>
+                        <strong className="block text-slate-900 font-bold mb-0.5">
+                          Hotline Tổng Đài 24/7:
+                        </strong>
+                        <a
+                          href={COMPANY_INFO.hotlineHref}
+                          className="text-lg font-black text-red-600 hover:underline block"
+                        >
+                          {COMPANY_INFO.hotline}
+                        </a>
+                        <span className="text-xs text-slate-600 font-medium">
+                          Phục vụ 24/7 liên tục cả ngày và đêm
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <strong className="block text-slate-900 font-bold mb-0.5">
+                          Email Hỗ Trợ:
+                        </strong>
+                        <a
+                          href={`mailto:${COMPANY_INFO.email}`}
+                          className="text-xs sm:text-sm text-slate-800 hover:underline font-semibold"
+                        >
+                          {COMPANY_INFO.email}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        <FacebookIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <strong className="block text-slate-900 font-bold mb-0.5">
+                          Fanpage Facebook:
+                        </strong>
+                        <a
+                          href={COMPANY_INFO.fanpageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs sm:text-sm text-blue-700 hover:underline font-bold"
+                        >
+                          {COMPANY_INFO.fanpage}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        <Globe className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <strong className="block text-slate-900 font-bold mb-0.5">
+                          Website Chính Thức:
+                        </strong>
+                        <p className="text-xs sm:text-sm text-slate-800 font-semibold">
+                          {COMPANY_INFO.domainName}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <strong className="block text-slate-900 font-bold mb-0.5">
+                          Thời Gian Làm Việc:
+                        </strong>
+                        <p className="text-xs sm:text-sm text-slate-800 font-medium">
+                          {COMPANY_INFO.workingHours}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Kênh gọi nhanh / Zalo */}
+                  <div className="pt-2 flex gap-3">
+                    <a
+                      href={COMPANY_INFO.zaloHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Nhắn Tin Zalo</span>
+                    </a>
+                    <a
+                      href={COMPANY_INFO.hotlineHref}
+                      className="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
+                    >
+                      <Phone className="w-4 h-4" />
+                      <span>Gọi Hotline</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Cột Phải: Form Gửi Tin Nhắn Phản Hồi */}
-            <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
-                Gửi Tin Nhắn Cho Xe Ghép Lubi
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mb-6">
-                Để lại lời nhắn, chúng tôi sẽ liên hệ lại qua điện thoại hoặc Zalo trong vòng 10 phút.
-              </p>
-
-              {submitted ? (
-                <div className="p-8 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900">Đã Gửi Tin Nhắn Thành Công!</h3>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    Cảm ơn <strong>{name}</strong>. Bộ phận chăm sóc khách hàng của Lubi sẽ liên hệ lại qua số <strong>{phone}</strong> trong ít phút.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(false)}
-                    className="text-xs font-bold text-emerald-700 underline pt-2"
-                  >
-                    Gửi tin nhắn khác
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Họ và Tên Của Bạn <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Nguyễn Văn A"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Số Điện Thoại <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="0858911247"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                      Nội Dung Tin Nhắn / Yêu Cầu Chuyến Đi
-                    </label>
-                    <textarea
-                      rows={4}
-                      required
-                      placeholder="Nhập nội dung cần hỗ trợ, lộ trình chuyến xe hoặc câu hỏi của bạn..."
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Gửi Tin Nhắn Phản Hồi</span>
-                  </button>
-                </form>
-              )}
+            {/* Cột Phải: Form Đặt Xe Trực Tuyến Tại Đây (thay thế Card Gửi Phản Hồi) */}
+            <div className="lg:col-span-7">
+              <BookingForm title="ĐẶT XE TRỰC TUYẾN TẠI ĐÂY" />
             </div>
           </div>
 
-          {/* Bản đồ Google Maps nhúng */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-600" />
-              <span>Vị Trí Trụ Sở Trên Bản Đồ (Xuân Mai Tower, Hà Đông)</span>
-            </h2>
-
-            <div className="w-full h-80 rounded-xl overflow-hidden border border-slate-200">
+          {/* Bản đồ vị trí Lê Chân, Hải Phòng (Google Maps Embed) */}
+          <section
+            aria-label="Bản đồ vị trí Lê Chân, Hải Phòng"
+            className="w-full rounded-3xl overflow-hidden border border-slate-200/90 shadow-md bg-white"
+          >
+            <div className="relative w-full h-[380px] sm:h-[480px]">
               <iframe
-                title="Bản đồ vị trí Công ty Cổ phần Đầu tư Lubi Việt Nam"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.728956891253!2d105.77259657596856!3d20.96340248999818!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135cd29b13cf147%3A0xe54ef5a242207b5a!2zWHXDom4gTWFpIFRvd2VyIEjDoCDEkMO0bmc!5e0!3m2!1svi!2svn!4v1710000000000!5m2!1svi!2svn"
+                title="Bản đồ vị trí Lê Chân, Hải Phòng"
+                src="https://maps.google.com/maps?q=Le+Chan,+Hai+Phong,+Vietnam&t=&z=14&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
+                allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
               />
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </>

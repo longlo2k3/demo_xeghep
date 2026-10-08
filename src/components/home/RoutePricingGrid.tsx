@@ -7,15 +7,15 @@ import { POPULAR_ROUTES, type RouteItem } from "@/data/routes";
 import { Clock, CheckCircle2, ArrowRight, ChevronUp, X } from "lucide-react";
 
 const ROUTE_LOCATION_IMAGES: Record<string, string[]> = {
-  "hai-phong-bac-ninh-bac-giang": ["/HaiPhong.jpg", "/BacNinh.jpg", "/BacGiang.jpg"],
-  "hai-phong-ha-noi-noi-bai": ["/HaiPhong.jpg", "/HaNoi.webp", "/NoiBai.jpg"],
-  "hai-phong-ha-long": ["/HaiPhong.jpg", "/HaLong.jpg"],
-  "hai-phong-mong-cai": ["/HaiPhong.jpg", "/MongCai.jpg"],
-  "ha-long-bac-ninh-bac-giang": ["/HaLong.jpg", "/BacNinh.jpg", "/BacGiang.jpg"],
-  "ha-noi-mong-cai": ["/HaNoi.webp", "/MongCai.jpg"],
-  "ha-noi-ha-long": ["/HaNoi.webp", "/HaLong.jpg"],
-  "hai-phong-hai-duong": ["/HaiPhong.jpg", "/HaNoi.webp"],
-  "hai-phong-thai-nguyen": ["/HaiPhong.jpg", "/BacNinh.jpg", "/HaNoi.webp"],
+  "hai-phong-bac-ninh-bac-giang": ["/HaiPhong.webp", "/BacNinh.webp", "/BacGiang.webp"],
+  "hai-phong-ha-noi-noi-bai": ["/HaiPhong.webp", "/HaNoi.webp", "/NoiBai.webp"],
+  "hai-phong-ha-long": ["/HaiPhong.webp", "/HaLong.webp"],
+  "hai-phong-mong-cai": ["/HaiPhong.webp", "/MongCai.webp"],
+  "ha-long-bac-ninh-bac-giang": ["/HaLong.webp", "/BacNinh.webp", "/BacGiang.webp"],
+  "ha-noi-mong-cai": ["/HaNoi.webp", "/MongCai.webp"],
+  "ha-noi-ha-long": ["/HaNoi.webp", "/HaLong.webp"],
+  "hai-phong-hai-duong": ["/HaiPhong.webp", "/HaNoi.webp"],
+  "hai-phong-thai-nguyen": ["/HaiPhong.webp", "/BacNinh.webp", "/HaNoi.webp"],
 };
 
 function formatPriceFrom(val: number): string {
@@ -163,7 +163,7 @@ export function RoutePricingCard({ route }: { route: RouteItem }) {
 
         {/* Trust badge */}
         <div className="text-[11px] text-emerald-400 flex items-center gap-1.5 font-medium">
-          <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
           <span>Đón trả tận nhà 2 chiều • Miễn phí hủy chuyến</span>
         </div>
 
@@ -179,7 +179,7 @@ export function RoutePricingCard({ route }: { route: RouteItem }) {
 
           <Link
             href={`/tuyen-lien-tinh/${route.slug}`}
-            className="block text-center text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+            className="block text-center text-xs font-semibold text-slate-300 hover:text-white transition-colors"
           >
             Xem chi tiết tuyến đường &rarr;
           </Link>

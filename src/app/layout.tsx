@@ -9,7 +9,7 @@ import { buildGlobalBusinessSchema } from "@/lib/schema";
 import { SITE_DOMAIN, BRAND_NAME } from "@/lib/seo";
 
 const fontSans = Be_Vietnam_Pro({
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "600", "700", "900"],
   subsets: ["latin", "vietnamese"],
   display: "swap",
   variable: "--font-sans",

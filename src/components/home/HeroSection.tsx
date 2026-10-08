@@ -6,13 +6,14 @@ import { BookingForm } from "@/components/booking/BookingForm";
 export function HeroSection() {
   return (
     <section className="relative bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 text-white py-10 sm:py-14 lg:py-16 overflow-hidden border-b border-slate-800">
-      {/* Background Car Image + Soft Lighter Overlay */}
+      {/* Background Car Image + Soft Lighter Overlay (Lazy loaded to avoid competing with LCP) */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/banner2.avif"
+          src="/banner2.webp"
           alt="Đội xe riêng đời mới Xe Ghép Liên Tỉnh"
           fill
-          priority
+          loading="lazy"
+          decoding="async"
           sizes="100vw"
           className="object-cover object-center opacity-65 select-none pointer-events-none"
         />

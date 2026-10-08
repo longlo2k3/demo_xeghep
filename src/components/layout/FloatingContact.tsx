@@ -5,20 +5,20 @@ import { COMPANY_INFO } from "@/data/company-info";
 
 export function FloatingContact() {
   return (
-    <div className="fixed bottom-6 right-4 sm:right-6 z-50 flex flex-col items-center gap-3">
+    <div className="fixed bottom-6 right-4 sm:right-6 z-50 flex flex-col items-center gap-3 sm:gap-3.5">
       {/* Nút nổi Zalo */}
       <a
         href={COMPANY_INFO.zaloHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#0068FF] text-white shadow-2xl hover:bg-[#0052cc] hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#0068FF] text-white shadow-xl shadow-blue-600/30 hover:bg-[#0052cc] hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label="Chat Zalo ngay"
       >
         <span
           className="absolute inset-0 rounded-full bg-[#0068FF] animate-ping opacity-35 pointer-events-none"
           aria-hidden="true"
         />
-        <span className="font-black text-xs sm:text-sm tracking-tight select-none">
+        <span className="font-black text-sm sm:text-base tracking-tight select-none">
           Zalo
         </span>
         <span className="sr-only">Chat Zalo</span>
@@ -32,7 +32,7 @@ export function FloatingContact() {
       {/* Nút nổi Gọi điện (chuyển sang thay thế thanh hotline dài cũ) */}
       <a
         href={COMPANY_INFO.hotlineHref}
-        className="relative flex items-center justify-center w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-red-600 text-white shadow-2xl hover:bg-red-700 hover:scale-110 active:scale-95 transition-all duration-200 group"
+        className="relative flex items-center justify-center w-14 h-14 rounded-full bg-red-600 text-white shadow-xl shadow-red-600/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all duration-200 group"
         aria-label={`Gọi điện ngay ${COMPANY_INFO.hotline}`}
       >
         {/* Ripple animation rings */}
@@ -40,7 +40,7 @@ export function FloatingContact() {
           className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-40 pointer-events-none"
           aria-hidden="true"
         />
-        <Phone className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" aria-hidden="true" />
+        <Phone className="w-6 h-6 animate-pulse" aria-hidden="true" />
         <span className="sr-only">Gọi ngay {COMPANY_INFO.hotline}</span>
 
         {/* Tooltip desktop */}

@@ -163,7 +163,7 @@ export function Footer() {
         </div>
 
         {/* Dòng cuối: Bản quyền per spec_v2.md 2.4 */}
-        <div className="pt-6 border-t border-slate-900 text-center text-xs text-slate-500">
+        <div className="pt-6 border-t border-slate-900 text-center text-xs text-slate-400">
           <p>© Bản quyền thuộc về {COMPANY_INFO.name}.</p>
         </div>
       </div>

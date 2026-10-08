@@ -170,7 +170,7 @@ export default function NewsIndexPage() {
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 pointer-events-none opacity-80"
                   style={{
-                    backgroundImage: "url('/tongdai.png')",
+                    backgroundImage: "url('/tongdai.webp')",
                   }}
                 />
                 {/* Subtle dark gradient scrim ensuring text legibility */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import {
   MapPin,
   ArrowLeftRight,
@@ -42,6 +42,15 @@ export function BookingForm({
   variant,
 }: BookingFormProps) {
   const isGlass = variant ? variant === "glass" : compact;
+  const baseId = useId();
+  const pickupId = `${baseId}-pickup`;
+  const dropoffId = `${baseId}-dropoff`;
+  const rideGhepId = `${baseId}-ride-ghep`;
+  const rideBaoId = `${baseId}-ride-bao`;
+  const nameId = `${baseId}-name`;
+  const phoneId = `${baseId}-phone`;
+  const vehicleId = `${baseId}-vehicle`;
+  const datetimeId = `${baseId}-datetime`;
 
   const [pickup, setPickup] = useState(initialOrigin);
   const [dropoff, setDropoff] = useState(initialDestination);
@@ -171,17 +180,19 @@ export function BookingForm({
               {/* Điểm đón */}
               <div className="sm:col-span-5 relative">
                 <label
+                  htmlFor={pickupId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <MapPin
-                    className="w-3.5 h-3.5 text-emerald-400"
+                    className="w-4 h-4 text-emerald-400"
                     aria-hidden="true"
                   />
                   <span>Điểm đón *</span>
                 </label>
                 <input
+                  id={pickupId}
                   type="text"
                   required
                   list="pickup-locations"
@@ -191,7 +202,7 @@ export function BookingForm({
                   className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm transition-all ${
                     isGlass
                       ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
-                      : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-500"
                   } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
                 />
                 <datalist id="pickup-locations">
@@ -223,17 +234,19 @@ export function BookingForm({
               {/* Điểm đến */}
               <div className="sm:col-span-5 relative">
                 <label
+                  htmlFor={dropoffId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <MapPin
-                    className="w-3.5 h-3.5 text-red-400"
+                    className="w-4 h-4 text-red-400"
                     aria-hidden="true"
                   />
                   <span>Điểm đến *</span>
                 </label>
                 <input
+                  id={dropoffId}
                   type="text"
                   required
                   list="dropoff-locations"
@@ -243,7 +256,7 @@ export function BookingForm({
                   className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm transition-all ${
                     isGlass
                       ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
-                      : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
+                      : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-500"
                   } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
                 />
                 <datalist id="dropoff-locations">
@@ -256,15 +269,16 @@ export function BookingForm({
 
             {/* Hình thức: Radio chọn Ghép ghế / Bao xe */}
             <div>
-              <label
+              <span
                 className={`block text-xs font-bold mb-1.5 ${
                   isGlass ? "text-slate-200" : "text-slate-700"
                 }`}
               >
                 Hình thức di chuyển *
-              </label>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              </span>
+              <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Hình thức di chuyển">
                 <label
+                  htmlFor={rideGhepId}
                   className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border cursor-pointer font-bold transition-all ${
                     compact ? "p-2.5 text-xs" : "p-3 text-xs sm:text-sm"
                   } ${
@@ -278,6 +292,7 @@ export function BookingForm({
                   }`}
                 >
                   <input
+                    id={rideGhepId}
                     type="radio"
                     name="rideType"
                     value="ghep"
@@ -289,6 +304,7 @@ export function BookingForm({
                 </label>
 
                 <label
+                  htmlFor={rideBaoId}
                   className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border cursor-pointer font-bold transition-all ${
                     compact ? "p-2.5 text-xs" : "p-3 text-xs sm:text-sm"
                   } ${
@@ -302,6 +318,7 @@ export function BookingForm({
                   }`}
                 >
                   <input
+                    id={rideBaoId}
                     type="radio"
                     name="rideType"
                     value="bao"
@@ -318,17 +335,19 @@ export function BookingForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label
+                  htmlFor={nameId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <User
-                    className="w-3.5 h-3.5 text-slate-400"
+                    className="w-4 h-4 text-slate-400"
                     aria-hidden="true"
                   />
                   <span>Họ và tên *</span>
                 </label>
                 <input
+                  id={nameId}
                   type="text"
                   required
                   value={fullName}
@@ -344,17 +363,19 @@ export function BookingForm({
 
               <div>
                 <label
+                  htmlFor={phoneId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <Phone
-                    className="w-3.5 h-3.5 text-slate-400"
+                    className="w-4 h-4 text-slate-400"
                     aria-hidden="true"
                   />
                   <span>Số điện thoại *</span>
                 </label>
                 <input
+                  id={phoneId}
                   type="tel"
                   required
                   value={phone}
@@ -383,17 +404,19 @@ export function BookingForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label
+                  htmlFor={vehicleId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <Car
-                    className="w-3.5 h-3.5 text-slate-400"
+                    className="w-4 h-4 text-slate-400"
                     aria-hidden="true"
                   />
                   <span>Tùy chọn dịch vụ *</span>
                 </label>
                 <select
+                  id={vehicleId}
                   value={vehicleType}
                   onChange={(e) => setVehicleType(e.target.value)}
                   className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm transition-all ${
@@ -431,17 +454,19 @@ export function BookingForm({
 
               <div>
                 <label
+                  htmlFor={datetimeId}
                   className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
                   <Calendar
-                    className="w-3.5 h-3.5 text-slate-400"
+                    className="w-4 h-4 text-slate-400"
                     aria-hidden="true"
                   />
                   <span>Ngày và giờ đón *</span>
                 </label>
                 <input
+                  id={datetimeId}
                   type="datetime-local"
                   required
                   min={minDateTime}
@@ -468,10 +493,10 @@ export function BookingForm({
               </button>
               <p
                 className={`text-center text-[11px] sm:text-xs mt-2 flex items-center justify-center gap-1.5 ${
-                  isGlass ? "text-slate-300" : "text-slate-500"
+                  isGlass ? "text-slate-300" : "text-slate-600"
                 }`}
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                 <span>
                   Thông tin bảo mật 100% • Tài xế liên hệ trước 15 phút
                 </span>

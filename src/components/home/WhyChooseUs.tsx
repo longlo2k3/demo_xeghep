@@ -110,7 +110,7 @@ export function WhyChooseUs() {
                         {item.title}
                       </span>
                     </div>
-                    <span className="hidden sm:inline-block text-[11px] text-slate-400 font-mono tracking-wider text-right flex-shrink-0">
+                    <span className="hidden sm:inline-block text-[11px] text-slate-300 font-mono tracking-wider text-right flex-shrink-0">
                       {item.subtitle}
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export function WhyChooseUs() {
 
             {/* Bottom Archive / Notice line */}
             <div className="relative z-10 pt-3 mt-3 border-t border-white/10">
-              <p className="text-[11px] text-slate-400 font-mono tracking-wide leading-tight">
+              <p className="text-[11px] text-slate-300 font-mono tracking-wide leading-tight">
                 * Cam kết hoàn tiền minh bạch, hỗ trợ đổi chuyến & phản hồi
                 nhanh chóng 24/7.
               </p>

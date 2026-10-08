@@ -57,7 +57,7 @@ export default function ContactPage() {
                   aria-hidden="true"
                 >
                   <Image
-                    src="/letan.png"
+                    src="/letan.webp"
                     alt=""
                     fill
                     sizes="(max-width: 1024px) 100vw, 40vw"

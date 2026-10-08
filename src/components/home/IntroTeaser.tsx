@@ -158,7 +158,7 @@ export function IntroTeaser() {
                         {item.tag}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 truncate leading-normal">
+                    <p className="text-[11px] text-slate-600 truncate leading-normal">
                       {item.desc}
                     </p>
                   </Link>

@@ -6,15 +6,15 @@ import { Package, ShieldAlert, Navigation, Sparkles } from "lucide-react";
 export function PriceBannerSection() {
   return (
     <section className="relative w-full overflow-hidden bg-slate-900 text-white border-b border-sky-950">
-      {/* Background Image Banner */}
+      {/* Background Image Banner (Optimized WebP for fast LCP) */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/banner.png"
+          src="/banner.webp"
           alt="Bảng giá các tuyến xe ghép liên tỉnh"
           fill
           priority
           sizes="100vw"
-          quality={75}
+          quality={80}
           className="object-cover object-left md:object-left-top lg:object-center select-none pointer-events-none"
         />
         {/* Dark overlay specifically for mobile to enhance text contrast and readability */}

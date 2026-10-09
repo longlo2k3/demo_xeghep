@@ -41,8 +41,8 @@ export function RouteListing() {
         ))}
       </div>
 
-      {/* Lưới 9 RouteCard thiết kế đồng bộ với trang chủ */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Lưới 9 RouteCard thiết kế đồng bộ với trang chủ (2 cột trên mobile) */}
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
         {filteredRoutes.map((route) => (
           <RoutePricingCard key={route.slug} route={route} />
         ))}

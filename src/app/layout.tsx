@@ -10,7 +10,7 @@ import { SITE_DOMAIN, BRAND_NAME } from "@/lib/seo";
 
 const fontSans = Be_Vietnam_Pro({
   weight: ["400", "600", "700", "900"],
-  subsets: ["latin", "vietnamese"],
+  subsets: ["vietnamese"],
   display: "swap",
   variable: "--font-sans",
 });

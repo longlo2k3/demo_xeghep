@@ -1,5 +1,3 @@
-"use client";
-
 import { Phone } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
 

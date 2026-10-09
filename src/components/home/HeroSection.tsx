@@ -14,7 +14,8 @@ export function HeroSection() {
           fill
           loading="lazy"
           decoding="async"
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1280px"
+          quality={75}
           className="object-cover object-center opacity-65 select-none pointer-events-none"
         />
         {/* Left-focused gradient: readable text on left, clear see-through glass view on right */}

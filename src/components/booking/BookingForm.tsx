@@ -11,12 +11,17 @@ import {
   CheckCircle2,
   Clock,
   ShieldCheck,
+  Sparkles,
+  Users,
+  Navigation,
 } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
+import { POPULAR_ROUTES, type RouteItem } from "@/data/routes";
 
 interface BookingFormProps {
   initialOrigin?: string;
   initialDestination?: string;
+  initialRouteSlug?: string;
   title?: string;
   compact?: boolean;
   variant?: "glass" | "solid";
@@ -34,15 +39,164 @@ const COMMON_LOCATIONS = [
   "Thái Nguyên (TP. Thái Nguyên, KCN Samsung)",
 ];
 
+// Helper chuẩn hóa hiển thị giá (ví dụ: "400k" -> "400.000đ", "từ 899k" -> "từ 899.000đ")
+function formatPriceText(raw?: string): string {
+  if (!raw) return "";
+  return raw.replace(/(\d+(?:\.\d+)?)k/gi, (_, num) => `${num}.000đ`);
+}
+
+// Helper tìm tuyến khớp với điểm đón và điểm đến (hỗ trợ cả 2 chiều)
+function findMatchingRoute(
+  pickupStr: string,
+  dropoffStr: string,
+  explicitSlug?: string,
+): RouteItem | undefined {
+  if (explicitSlug && explicitSlug !== "custom") {
+    const bySlug = POPULAR_ROUTES.find((r) => r.slug === explicitSlug);
+    if (bySlug) return bySlug;
+  }
+
+  if (!pickupStr || !dropoffStr) return undefined;
+
+  const normalize = (s: string) =>
+    s
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .trim();
+
+  const p = normalize(pickupStr);
+  const d = normalize(dropoffStr);
+
+  return POPULAR_ROUTES.find((r) => {
+    const o = normalize(r.origin);
+    const dest = normalize(r.destination);
+
+    // Chiều thuận
+    const directOrigin = p.includes(o) || o.includes(p);
+    const directDest =
+      d.includes(dest) ||
+      dest.includes(d) ||
+      r.dropoffs.some((item) => {
+        const normItem = normalize(item);
+        return d.includes(normItem) || normItem.includes(d);
+      });
+
+    if (directOrigin && directDest) return true;
+
+    // Chiều ngược
+    const revOrigin = d.includes(o) || o.includes(d);
+    const revDest =
+      p.includes(dest) ||
+      dest.includes(p) ||
+      r.dropoffs.some((item) => {
+        const normItem = normalize(item);
+        return p.includes(normItem) || normItem.includes(p);
+      });
+
+    return revOrigin && revDest;
+  });
+}
+
+interface PriceEstimateResult {
+  price: string;
+  unit: string;
+  badge?: string;
+  note: string;
+}
+
+// Helper tính toán giá cước dựa trên thông số đặt xe
+function calculatePriceEstimate({
+  route,
+  rideType,
+  vehicleType,
+  passengerCount,
+}: {
+  route?: RouteItem;
+  rideType: "ghep" | "bao";
+  vehicleType: string;
+  passengerCount: number;
+}): PriceEstimateResult {
+  if (vehicleType === "guihang") {
+    return {
+      price: "Từ 150.000đ",
+      unit: "/ kiện hàng",
+      badge: "Hỏa tốc trong ngày",
+      note: "Giao nhận tận tay 2 đầu, phát hàng nhanh trong 2–4 giờ.",
+    };
+  }
+
+  if (!route) {
+    return {
+      price: "Chỉ từ 8.000đ – 11.000đ",
+      unit: "/ km",
+      badge: "Tính theo km thực tế",
+      note: "Tổng đài sẽ gọi báo giá trọn gói ưu đãi nhất theo đúng lộ trình của bạn.",
+    };
+  }
+
+  if (rideType === "ghep") {
+    if (passengerCount === 2 && route.priceShare2Text) {
+      return {
+        price: formatPriceText(route.priceShare2Text),
+        unit: "/ 2 khách",
+        badge: "Ưu đãi đi 2 người",
+        note: `Đón trả tận nhà 2 chiều • Ghép tối đa 1–3 người trên xe, không nhồi nhét.`,
+      };
+    }
+
+    if (passengerCount >= 3) {
+      return {
+        price: route.priceCharter4to5Text
+          ? formatPriceText(route.priceCharter4to5Text)
+          : "Liên hệ ưu đãi",
+        unit: "/ 3 khách (Khuyên bao xe)",
+        badge: "Tiết kiệm nhất khi bao xe",
+        note: `Từ 3 khách trở lên, bao trọn gói xe riêng để chủ động thời gian và tối ưu chi phí!`,
+      };
+    }
+
+    return {
+      price: formatPriceText(route.priceShare1Text),
+      unit: "/ khách",
+      badge: "Ghép 1–3 khách/xe",
+      note: `Đón trả tận nhà • Chạy cao tốc êm ái, cam kết không bắt khách dọc đường.`,
+    };
+  }
+
+  // rideType === "bao"
+  if (vehicleType === "7cho") {
+    const raw7 = route.priceCharter7Text || "từ 1.000k";
+    return {
+      price: formatPriceText(raw7),
+      unit: "/ trọn chuyến (Xe 7 chỗ)",
+      badge: "Bao xe 7 chỗ riêng",
+      note: `Đã gồm trọn gói vé cầu đường & cao tốc. Không phát sinh bất kỳ phụ phí nào.`,
+    };
+  }
+
+  // 4cho hoặc 5cho
+  const raw45 = route.priceCharter4to5Text || "từ 900k";
+  return {
+    price: formatPriceText(raw45),
+    unit: `/ trọn chuyến (${vehicleType === "5cho" ? "Xe 5 chỗ" : "Xe 4 chỗ"})`,
+    badge: "Bao xe riêng đời mới",
+    note: `Đã gồm trọn gói vé cầu đường & cao tốc. Đưa đón tận nhà, linh hoạt giờ xuất phát.`,
+  };
+}
+
 export function BookingForm({
   initialOrigin = "",
   initialDestination = "",
+  initialRouteSlug = "",
   title = "ĐẶT XE TRỰC TUYẾN",
   compact = false,
   variant,
 }: BookingFormProps) {
   const isGlass = variant ? variant === "glass" : compact;
   const baseId = useId();
+  const routeSelectId = `${baseId}-route-select`;
   const pickupId = `${baseId}-pickup`;
   const dropoffId = `${baseId}-dropoff`;
   const rideGhepId = `${baseId}-ride-ghep`;
@@ -52,9 +206,29 @@ export function BookingForm({
   const vehicleId = `${baseId}-vehicle`;
   const datetimeId = `${baseId}-datetime`;
 
-  const [pickup, setPickup] = useState(initialOrigin);
-  const [dropoff, setDropoff] = useState(initialDestination);
+  // Khởi tạo tuyến mặc định
+  const defaultRoute =
+    (initialRouteSlug &&
+      POPULAR_ROUTES.find((r) => r.slug === initialRouteSlug)) ||
+    findMatchingRoute(initialOrigin, initialDestination) ||
+    POPULAR_ROUTES[1]; // Tuyến Hải Phòng - Hà Nội - Nội Bài làm mặc định tiêu biểu
+
+  const [selectedRouteSlug, setSelectedRouteSlug] = useState<string>(
+    initialRouteSlug ||
+      (initialOrigin && initialDestination
+        ? defaultRoute?.slug || "custom"
+        : defaultRoute?.slug || "hai-phong-ha-noi-noi-bai"),
+  );
+  const [pickup, setPickup] = useState(
+    initialOrigin || defaultRoute?.origin || "Hải Phòng (Nội thành, Quán Toan)",
+  );
+  const [dropoff, setDropoff] = useState(
+    initialDestination ||
+      defaultRoute?.destination ||
+      "Hà Nội (Các quận nội thành) / Nội Bài",
+  );
   const [rideType, setRideType] = useState<"ghep" | "bao">("ghep");
+  const [passengerCount, setPassengerCount] = useState<number>(1);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [vehicleType, setVehicleType] = useState("4cho");
@@ -62,10 +236,37 @@ export function BookingForm({
   const [submitted, setSubmitted] = useState(false);
   const [phoneError, setPhoneError] = useState("");
 
+  // Xác định tuyến xe đang chọn hoặc khớp từ điểm đón/trả
+  const activeRoute =
+    selectedRouteSlug !== "custom"
+      ? POPULAR_ROUTES.find((r) => r.slug === selectedRouteSlug) ||
+        findMatchingRoute(pickup, dropoff)
+      : findMatchingRoute(pickup, dropoff);
+
+  // Tính toán giá cước thời gian thực
+  const estimatedPrice = calculatePriceEstimate({
+    route: activeRoute,
+    rideType,
+    vehicleType,
+    passengerCount,
+  });
+
   // Get current date string for min datetime-local
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTime = now.toISOString().slice(0, 16);
+
+  const handleRouteChange = (slug: string) => {
+    setSelectedRouteSlug(slug);
+    if (slug === "custom") {
+      return;
+    }
+    const found = POPULAR_ROUTES.find((r) => r.slug === slug);
+    if (found) {
+      setPickup(found.origin);
+      setDropoff(found.destination);
+    }
+  };
 
   const handleSwap = () => {
     const temp = pickup;
@@ -140,14 +341,20 @@ export function BookingForm({
               xuất phát của quý khách.
             </p>
             <div
-              className={`p-3.5 rounded-xl border max-w-md mx-auto text-left text-xs space-y-1 ${
+              className={`p-4 rounded-xl border max-w-md mx-auto text-left text-xs sm:text-sm space-y-2 ${
                 isGlass
-                  ? "bg-black/30 border-white/20 text-slate-200 backdrop-blur-sm"
-                  : "bg-slate-50 border-slate-200 text-slate-600"
+                  ? "bg-black/35 border-white/20 text-slate-200 backdrop-blur-sm"
+                  : "bg-slate-50 border-slate-200 text-slate-700"
               }`}
             >
               <p>
                 <strong>Khách hàng:</strong> {fullName} ({phone})
+              </p>
+              <p>
+                <strong>Tuyến di chuyển:</strong>{" "}
+                <span className="font-semibold text-amber-400">
+                  {activeRoute ? activeRoute.name : `${pickup} ⇄ ${dropoff}`}
+                </span>
               </p>
               <p>
                 <strong>Điểm đón:</strong> {pickup || "Theo thỏa thuận"}
@@ -157,8 +364,28 @@ export function BookingForm({
               </p>
               <p>
                 <strong>Hình thức:</strong>{" "}
-                {rideType === "ghep" ? "Ghép ghế (1-3 khách)" : "Bao xe riêng"}
+                {vehicleType === "guihang"
+                  ? "Gửi hàng hỏa tốc"
+                  : rideType === "ghep"
+                    ? `Đi ghép (${passengerCount} khách)`
+                    : `Bao xe riêng (${
+                        vehicleType === "7cho"
+                          ? "7 chỗ"
+                          : vehicleType === "5cho"
+                            ? "5 chỗ"
+                            : "4 chỗ"
+                      })`}
               </p>
+              <div
+                className={`pt-2.5 mt-2 border-t flex items-center justify-between ${
+                  isGlass ? "border-white/15" : "border-slate-200"
+                }`}
+              >
+                <span className="font-bold">Giá cước niêm yết:</span>
+                <span className="font-black text-amber-400 text-base sm:text-lg">
+                  {estimatedPrice.price} {estimatedPrice.unit}
+                </span>
+              </div>
             </div>
             <div className="pt-2">
               <a
@@ -173,9 +400,67 @@ export function BookingForm({
         ) : (
           <form
             onSubmit={handleSubmit}
-            className={compact ? "space-y-3.5 sm:space-y-4" : "space-y-5"}
+            className={
+              compact ? "space-y-3.5 sm:space-y-4" : "space-y-4 sm:space-y-5"
+            }
           >
-            {/* Điểm đón & Điểm đến với nút Đảo chiều ⇄ */}
+            {/* Mục 1: Tuyến xe di chuyển - Chọn nhanh tuyến & xem giá tức thì */}
+            <div>
+              <label
+                htmlFor={routeSelectId}
+                className={`block text-xs font-bold mb-1.5 flex items-center justify-between ${
+                  isGlass ? "text-slate-200" : "text-slate-700"
+                }`}
+              >
+                <span className="flex items-center gap-1.5">
+                  <Navigation
+                    className="w-4 h-4 text-amber-400"
+                    aria-hidden="true"
+                  />
+                  <span>Chọn tuyến đường di chuyển *</span>
+                </span>
+                <span className="text-[11px] font-semibold text-amber-400 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Báo giá tự động</span>
+                </span>
+              </label>
+              <select
+                id={routeSelectId}
+                value={selectedRouteSlug}
+                onChange={(e) => handleRouteChange(e.target.value)}
+                className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm font-semibold transition-all ${
+                  isGlass
+                    ? "bg-slate-950/40 hover:bg-slate-950/55 focus:bg-slate-950/70 border-white/20 focus:border-red-400 text-white backdrop-blur-xs"
+                    : "bg-white border-slate-300 text-slate-900"
+                } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
+              >
+                {POPULAR_ROUTES.map((r) => (
+                  <option
+                    key={r.slug}
+                    value={r.slug}
+                    className={
+                      isGlass
+                        ? "bg-slate-900 text-white font-medium"
+                        : "text-slate-900"
+                    }
+                  >
+                    {r.name}
+                  </option>
+                ))}
+                <option
+                  value="custom"
+                  className={
+                    isGlass
+                      ? "bg-slate-900 text-white font-medium"
+                      : "text-slate-900"
+                  }
+                >
+                  Tuyến liên tỉnh khác (Tự nhập điểm đón & trả)
+                </option>
+              </select>
+            </div>
+
+            {/* Mục 2: Điểm đón & Điểm đến với nút Đảo chiều ⇄ */}
             <div className="grid grid-cols-1 sm:grid-cols-11 gap-2.5 sm:gap-3 items-center">
               {/* Điểm đón */}
               <div className="sm:col-span-5 relative">
@@ -239,10 +524,7 @@ export function BookingForm({
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
-                  <MapPin
-                    className="w-4 h-4 text-red-400"
-                    aria-hidden="true"
-                  />
+                  <MapPin className="w-4 h-4 text-red-400" aria-hidden="true" />
                   <span>Điểm đến *</span>
                 </label>
                 <input
@@ -267,7 +549,7 @@ export function BookingForm({
               </div>
             </div>
 
-            {/* Hình thức: Radio chọn Ghép ghế / Bao xe */}
+            {/* Mục 3: Hình thức di chuyển: Đi Ghép / Bao xe */}
             <div>
               <span
                 className={`block text-xs font-bold mb-1.5 ${
@@ -276,7 +558,11 @@ export function BookingForm({
               >
                 Hình thức di chuyển *
               </span>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Hình thức di chuyển">
+              <div
+                className="grid grid-cols-2 gap-2 sm:gap-3"
+                role="radiogroup"
+                aria-label="Hình thức di chuyển"
+              >
                 <label
                   htmlFor={rideGhepId}
                   className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border cursor-pointer font-bold transition-all ${
@@ -329,78 +615,43 @@ export function BookingForm({
                   <span>Bao Xe (Trọn Gói)</span>
                 </label>
               </div>
-            </div>
 
-            {/* Thông tin khách hàng: Họ và tên + Số điện thoại */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <label
-                  htmlFor={nameId}
-                  className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
-                    isGlass ? "text-slate-200" : "text-slate-700"
-                  }`}
-                >
-                  <User
-                    className="w-4 h-4 text-slate-400"
-                    aria-hidden="true"
-                  />
-                  <span>Họ và tên *</span>
-                </label>
-                <input
-                  id={nameId}
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                  className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm transition-all ${
+              {/* Tùy chọn số lượng khách khi Đi Ghép */}
+              {rideType === "ghep" && vehicleType !== "guihang" && (
+                <div
+                  className={`mt-2.5 flex items-center justify-between p-2 sm:p-2.5 rounded-xl border text-xs transition-all ${
                     isGlass
-                      ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
-                      : "bg-white border-slate-300 text-slate-900"
-                  } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor={phoneId}
-                  className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
-                    isGlass ? "text-slate-200" : "text-slate-700"
+                      ? "bg-white/5 border-white/15 text-slate-200 backdrop-blur-xs"
+                      : "bg-slate-50 border-slate-200 text-slate-700"
                   }`}
                 >
-                  <Phone
-                    className="w-4 h-4 text-slate-400"
-                    aria-hidden="true"
-                  />
-                  <span>Số điện thoại *</span>
-                </label>
-                <input
-                  id={phoneId}
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                    if (phoneError) setPhoneError("");
-                  }}
-                  placeholder="Ví dụ: 0962298293"
-                  className={`w-full rounded-xl border text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all ${
-                    phoneError
-                      ? "border-red-500 bg-red-500/20 text-white"
-                      : isGlass
-                        ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
-                        : "bg-white border-slate-300 text-slate-900"
-                  } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
-                />
-                {phoneError && (
-                  <p className="text-xs text-red-400 mt-1 font-semibold">
-                    {phoneError}
-                  </p>
-                )}
-              </div>
+                  <span className="font-semibold flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-amber-400" />
+                    <span>Số người đi ghép:</span>
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setPassengerCount(num)}
+                        className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all ${
+                          passengerCount === num
+                            ? "bg-amber-400 text-slate-950 shadow-sm font-black scale-105"
+                            : isGlass
+                              ? "bg-white/10 text-slate-300 hover:bg-white/20"
+                              : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        {num} người
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Tùy chọn dịch vụ + Ngày và giờ đón */}
+            {/* Mục 4: Tùy chọn dịch vụ + Ngày và giờ đón */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label
@@ -409,10 +660,7 @@ export function BookingForm({
                     isGlass ? "text-slate-200" : "text-slate-700"
                   }`}
                 >
-                  <Car
-                    className="w-4 h-4 text-slate-400"
-                    aria-hidden="true"
-                  />
+                  <Car className="w-4 h-4 text-slate-400" aria-hidden="true" />
                   <span>Tùy chọn dịch vụ *</span>
                 </label>
                 <select
@@ -481,15 +729,87 @@ export function BookingForm({
               </div>
             </div>
 
-            {/* Nút Submit: Đặt xe ngay */}
+            {/* Mục 5: Thông tin khách hàng: Họ và tên + Số điện thoại */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div>
+                <label
+                  htmlFor={nameId}
+                  className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
+                    isGlass ? "text-slate-200" : "text-slate-700"
+                  }`}
+                >
+                  <User className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                  <span>Họ và tên *</span>
+                </label>
+                <input
+                  id={nameId}
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                  className={`w-full rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500 text-xs sm:text-sm transition-all ${
+                    isGlass
+                      ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
+                      : "bg-white border-slate-300 text-slate-900"
+                  } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor={phoneId}
+                  className={`block text-xs font-bold mb-1 flex items-center gap-1.5 ${
+                    isGlass ? "text-slate-200" : "text-slate-700"
+                  }`}
+                >
+                  <Phone
+                    className="w-4 h-4 text-slate-400"
+                    aria-hidden="true"
+                  />
+                  <span>Số điện thoại *</span>
+                </label>
+                <input
+                  id={phoneId}
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (phoneError) setPhoneError("");
+                  }}
+                  placeholder="Ví dụ: 0962298293"
+                  className={`w-full rounded-xl border text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all ${
+                    phoneError
+                      ? "border-red-500 bg-red-500/20 text-white"
+                      : isGlass
+                        ? "bg-slate-950/25 hover:bg-slate-950/35 focus:bg-slate-950/50 border-white/20 focus:border-red-400 text-white placeholder:text-slate-400 backdrop-blur-xs"
+                        : "bg-white border-slate-300 text-slate-900"
+                  } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
+                />
+                {phoneError && (
+                  <p className="text-xs text-red-400 mt-1 font-semibold">
+                    {phoneError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Nút Submit: Đặt xe ngay kèm giá tiền */}
             <div className="pt-1 sm:pt-2">
               <button
                 type="submit"
-                className={`w-full rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 text-white font-black uppercase tracking-wider shadow-lg shadow-red-600/40 hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-red-400/30 ${
-                  compact ? "py-3 px-4 text-sm" : "py-4 px-6 text-base"
+                className={`w-full rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 text-white font-black uppercase tracking-wider shadow-lg shadow-red-600/40 hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-red-400/30 flex items-center justify-center gap-2 ${
+                  compact
+                    ? "py-3 px-4 text-xs sm:text-sm"
+                    : "py-4 px-6 text-sm sm:text-base"
                 }`}
               >
-                Đặt xe ngay
+                <span>ĐẶT XE NGAY</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                <span className="text-amber-300 font-extrabold normal-case">
+                  {estimatedPrice.price}
+                </span>
               </button>
               <p
                 className={`text-center text-[11px] sm:text-xs mt-2 flex items-center justify-center gap-1.5 ${

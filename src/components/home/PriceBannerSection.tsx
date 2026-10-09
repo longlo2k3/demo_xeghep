@@ -13,13 +13,13 @@ export function PriceBannerSection() {
           alt="Bảng giá các tuyến xe ghép liên tỉnh"
           fill
           priority
-          sizes="100vw"
-          quality={80}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1920px"
+          quality={75}
           className="object-cover object-left md:object-left-top lg:object-center select-none pointer-events-none"
         />
-        {/* Dark overlay specifically for mobile to enhance text contrast and readability */}
+        {/* Dark overlay specifically for mobile to enhance text contrast without GPU blur paint latency */}
         <div
-          className="absolute inset-0 bg-slate-950/80 sm:bg-slate-950/75 lg:hidden backdrop-blur-[2px] pointer-events-none"
+          className="absolute inset-0 bg-slate-950/85 sm:bg-slate-950/75 lg:hidden pointer-events-none"
           aria-hidden="true"
         />
         {/* Subtle right-edge shadow/tint to blend smoothly on ultra-wide screens */}

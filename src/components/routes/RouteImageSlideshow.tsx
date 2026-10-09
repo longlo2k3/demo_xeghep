@@ -16,20 +16,20 @@ export interface RouteSlideItem {
 export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   "hai-phong-bac-ninh-bac-giang": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption:
         "Đón trả tận nhà tại nội thành Hải Phòng, Quán Toan, Thủy Nguyên",
       alt: "Xe ghép Hải Phòng Bắc Ninh Bắc Giang đón trả tại Hải Phòng",
     },
     {
-      src: "/BacNinh.jpg",
+      src: "/BacNinh.webp",
       badge: "Bắc Ninh",
       caption: "Trả tận nơi tại TP. Bắc Ninh, KCN Quế Võ, KCN Yên Phong",
       alt: "Xe ghép Hải Phòng đi Bắc Ninh đón trả KCN",
     },
     {
-      src: "/BacGiang.jpg",
+      src: "/BacGiang.webp",
       badge: "Bắc Giang",
       caption: "Trả tận nơi tại TP. Bắc Giang, KCN Quang Châu, KCN Đình Trám",
       alt: "Xe tiện chuyến Hải Phòng đi Bắc Giang",
@@ -37,7 +37,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "hai-phong-ha-noi-noi-bai": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption: "Đón trả tận nơi tại nhà riêng, văn phòng trung tâm Hải Phòng",
       alt: "Xe ghép Hải Phòng Hà Nội Nội Bài đón tại Hải Phòng",
@@ -50,7 +50,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
       alt: "Xe ghép Hải Phòng lên Hà Nội đón trả tận nhà",
     },
     {
-      src: "/NoiBai.jpg",
+      src: "/NoiBai.webp",
       badge: "Sân bay Nội Bài",
       caption: "Đón trả đúng giờ tại sảnh ga T1 nội địa & T2 quốc tế 24/7",
       alt: "Xe tiện chuyến Hải Phòng đi Sân bay Nội Bài đón sảnh T1 T2",
@@ -58,13 +58,13 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "hai-phong-ha-long": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption: "Đón tận nơi tại Quán Toan, Trung tâm, Thủy Nguyên, An Dương",
       alt: "Xe ghép Hải Phòng đi Hạ Long đón tại Hải Phòng",
     },
     {
-      src: "/HaLong.jpg",
+      src: "/HaLong.webp",
       badge: "TP. Hạ Long",
       caption:
         "Trả tận nơi Bãi Cháy, Hòn Gai, Tuần Châu, các khách sạn & resort",
@@ -73,13 +73,13 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "hai-phong-mong-cai": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption: "Đón tại nhà riêng toàn TP. Hải Phòng theo giờ hẹn",
       alt: "Xe ghép Hải Phòng Móng Cái xuất phát tại Hải Phòng",
     },
     {
-      src: "/MongCai.jpg",
+      src: "/MongCai.webp",
       badge: "TP. Móng Cái",
       caption: "Trả tận nơi Cửa khẩu quốc tế Móng Cái, Trà Cổ, Hải Hà",
       alt: "Xe ghép Hải Phòng Móng Cái đến Cửa khẩu",
@@ -87,19 +87,19 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "ha-long-bac-ninh-bac-giang": [
     {
-      src: "/HaLong.jpg",
+      src: "/HaLong.webp",
       badge: "TP. Hạ Long",
       caption: "Đón tận nhà tại Bãi Cháy, Hòn Gai, Tuần Châu",
       alt: "Xe ghép Hạ Long Bắc Ninh Bắc Giang đón tại Hạ Long",
     },
     {
-      src: "/BacNinh.jpg",
+      src: "/BacNinh.webp",
       badge: "Bắc Ninh",
       caption: "Trả tận nơi TP. Bắc Ninh, Tiên Du, Quế Võ",
       alt: "Xe ghép Hạ Long đi Bắc Ninh",
     },
     {
-      src: "/BacGiang.jpg",
+      src: "/BacGiang.webp",
       badge: "Bắc Giang",
       caption: "Trả tận nơi TP. Bắc Giang, Việt Yên, Yên Dũng",
       alt: "Xe ghép Hạ Long đi Bắc Giang",
@@ -113,7 +113,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
       alt: "Xe ghép Hà Nội Móng Cái đón tại Hà Nội",
     },
     {
-      src: "/MongCai.jpg",
+      src: "/MongCai.webp",
       badge: "Móng Cái",
       caption: "Trả tận nơi Cửa khẩu quốc tế Móng Cái, bãi biển Trà Cổ",
       alt: "Xe ghép Hà Nội Móng Cái đến cửa khẩu",
@@ -128,7 +128,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
       alt: "Xe ghép Hà Nội Hạ Long đón tại Hà Nội",
     },
     {
-      src: "/HaLong.jpg",
+      src: "/HaLong.webp",
       badge: "TP. Hạ Long",
       caption:
         "Trả tận sảnh khách sạn Bãi Cháy, Hòn Gai, cảng tàu khách Tuần Châu",
@@ -137,7 +137,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "hai-phong-hai-duong": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption:
         "Đón tận nơi tại Quán Toan, Hồng Bàng, An Dương, trung tâm Hải Phòng",
@@ -146,13 +146,13 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
   ],
   "hai-phong-thai-nguyen": [
     {
-      src: "/HaiPhong.jpg",
+      src: "/HaiPhong.webp",
       badge: "Hải Phòng",
       caption: "Đón tại nhà ở Hải Phòng đưa lên Thái Nguyên",
       alt: "Xe ghép Hải Phòng Thái Nguyên đón tại Hải Phòng",
     },
     {
-      src: "/BacNinh.jpg",
+      src: "/BacNinh.webp",
       badge: "Lộ trình cao tốc",
       caption: "Lộ trình kết nối cao tốc thông suốt, êm dịu, không say xe",
       alt: "Lộ trình cao tốc Hải Phòng Thái Nguyên",
@@ -163,7 +163,7 @@ export const ROUTE_SLIDES_MAP: Record<string, RouteSlideItem[]> = {
 // Fallback mặc định nếu tuyến chưa có ảnh riêng
 const DEFAULT_SLIDES: RouteSlideItem[] = [
   {
-    src: "/HaiPhong.jpg",
+    src: "/HaiPhong.webp",
     badge: "Điểm đón",
     caption: "Đón trả tận nhà nội thành và các huyện lân cận",
     alt: "Xe ghép tiện chuyến đón trả tận nhà",

@@ -19,7 +19,7 @@ import {
   PhoneCall,
   CalendarCheck,
   Users,
-  Car,
+  Package,
 } from "lucide-react";
 
 type Props = {
@@ -157,7 +157,7 @@ export default async function RouteDetailPage({ params }: Props) {
           </div>
 
           {/* PriceTable: Bảng giá chi tiết theo loại xe per spec_v2.md 5.2 */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-4 sm:p-8 space-y-4 sm:space-y-6">
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 uppercase flex items-center gap-2">
               <ShieldCheck
                 className="w-6 h-6 text-red-600"
@@ -170,10 +170,16 @@ export default async function RouteDetailPage({ params }: Props) {
               <table className="w-full text-left text-sm text-slate-700 border-collapse">
                 <thead>
                   <tr className="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-200 text-xs sm:text-sm">
-                    <th className="py-3.5 px-4">Loại Hình Dịch Vụ</th>
-                    <th className="py-3.5 px-4">Đặc Điểm & Số Lượng</th>
-                    <th className="py-3.5 px-4">Mức Giá Niêm Yết</th>
-                    <th className="py-3.5 px-4">Chính Sách Đón Trả</th>
+                    <th className="py-3 px-3 sm:py-3.5 sm:px-4">
+                      <span className="sm:hidden">Loại hình DV</span>
+                      <span className="hidden sm:inline">Loại Hình Dịch Vụ</span>
+                    </th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">Đặc Điểm & Số Lượng</th>
+                    <th className="py-3 px-3 sm:py-3.5 sm:px-4 text-right sm:text-left">
+                      <span className="sm:hidden">Giá</span>
+                      <span className="hidden sm:inline">Mức Giá Niêm Yết</span>
+                    </th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">Chính Sách Đón Trả</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -182,34 +188,39 @@ export default async function RouteDetailPage({ params }: Props) {
                       key={idx}
                       className="hover:bg-slate-50 transition-colors"
                     >
-                      <td className="py-4 px-4 font-bold text-slate-900 flex items-center gap-2">
-                        <Users className="w-4 h-4 text-red-600" />
-                        <span>{detail.label}</span>
+                      <td className="py-3.5 sm:py-4 px-3 sm:px-4 font-bold text-slate-900">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-red-600 flex-shrink-0" />
+                          <span>{detail.label}</span>
+                        </div>
                       </td>
-                      <td className="py-4 px-4 text-slate-600 text-xs sm:text-sm">
+                      <td className="py-4 px-4 text-slate-600 text-xs sm:text-sm hidden sm:table-cell">
                         {detail.label.includes("Ghép")
                           ? "Xe 4 - 7 chỗ đời mới, chỉ ghép 1-3 khách"
                           : "Xe riêng trọn gói, chủ động giờ xuất phát"}
                       </td>
-                      <td className="py-4 px-4 font-black text-red-600 text-base sm:text-lg">
+                      <td className="py-3.5 sm:py-4 px-3 sm:px-4 font-black text-red-600 text-base sm:text-lg text-right sm:text-left whitespace-nowrap">
                         {detail.price}
                       </td>
-                      <td className="py-4 px-4 text-emerald-700 font-semibold text-xs sm:text-sm">
+                      <td className="py-4 px-4 text-emerald-700 font-semibold text-xs sm:text-sm hidden sm:table-cell">
                         Đón trả tận nhà 2 chiều
                       </td>
                     </tr>
                   ))}
                   <tr className="hover:bg-slate-50 transition-colors">
-                    <td className="py-4 px-4 font-bold text-slate-900">
-                      Gửi hàng hỏa tốc
+                    <td className="py-3.5 sm:py-4 px-3 sm:px-4 font-bold text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <Package className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <span>Gửi hàng hỏa tốc</span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-slate-600 text-xs sm:text-sm">
+                    <td className="py-4 px-4 text-slate-600 text-xs sm:text-sm hidden sm:table-cell">
                       Tài liệu, bưu phẩm, kiện hàng trong ngày
                     </td>
-                    <td className="py-4 px-4 font-black text-amber-600 text-base">
+                    <td className="py-3.5 sm:py-4 px-3 sm:px-4 font-black text-amber-600 text-base text-right sm:text-left whitespace-nowrap">
                       Từ 150.000đ
                     </td>
-                    <td className="py-4 px-4 text-emerald-700 font-semibold text-xs sm:text-sm">
+                    <td className="py-4 px-4 text-emerald-700 font-semibold text-xs sm:text-sm hidden sm:table-cell">
                       Giao nhận tận tay
                     </td>
                   </tr>
@@ -366,6 +377,7 @@ export default async function RouteDetailPage({ params }: Props) {
               <BookingForm
                 initialOrigin={route.origin}
                 initialDestination={route.destination}
+                initialRouteSlug={route.slug}
                 title={`ĐẶT XE TUYẾN ${route.name.toUpperCase()}`}
               />
             </div>

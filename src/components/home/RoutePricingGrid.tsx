@@ -93,7 +93,7 @@ export function RoutePricingCard({ route }: { route: RouteItem }) {
           </Link>
         </div>
 
-        {/* --- MOBILE COMPACT PRICING: Giữ đầy đủ 100% tất cả các mức giá trong route.pricingDetails dạng lưới 2 cột siêu gọn --- */}
+        {/* --- MOBILE COMPACT PRICING: Lưới 2 cột đồng nhất 100%, không bị lệch dù 3 hay 4 giá --- */}
         <div className="bg-slate-950/80 backdrop-blur-sm rounded-lg p-1.5 border border-white/10 sm:hidden">
           <div className="text-[8px] font-extrabold uppercase tracking-wider text-amber-400/90 border-b border-white/10 pb-0.5 mb-1 flex items-center justify-between">
             <span>BẢNG GIÁ CHI TIẾT</span>
@@ -101,34 +101,18 @@ export function RoutePricingCard({ route }: { route: RouteItem }) {
               trọn gói
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-x-1.5 gap-y-1">
-            {route.pricingDetails.map((detail, idx) => {
-              const isLastOdd =
-                route.pricingDetails.length % 2 !== 0 &&
-                idx === route.pricingDetails.length - 1;
-              return (
-                <div
-                  key={idx}
-                  className={`min-w-0 ${
-                    isLastOdd
-                      ? "col-span-2 flex items-center justify-between border-t border-white/5 pt-0.5"
-                      : "flex flex-col"
-                  }`}
-                >
-                  <span className="text-[8px] text-slate-300 truncate flex items-center gap-0.5">
-                    <span className="w-1 h-1 rounded-full bg-amber-400 flex-shrink-0" />
-                    <span className="truncate">{detail.label}</span>
-                  </span>
-                  <span
-                    className={`font-extrabold text-amber-300 truncate leading-tight ${
-                      isLastOdd ? "text-[9.5px]" : "text-[9.5px] pl-1.5"
-                    }`}
-                  >
-                    {detail.price}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 gap-x-1.5 gap-y-1 min-h-[50px] content-start">
+            {route.pricingDetails.map((detail, idx) => (
+              <div key={idx} className="flex flex-col min-w-0">
+                <span className="text-[8px] text-slate-300 truncate flex items-center gap-0.5">
+                  <span className="w-1 h-1 rounded-full bg-amber-400 flex-shrink-0" />
+                  <span className="truncate">{detail.label}</span>
+                </span>
+                <span className="font-extrabold text-amber-300 truncate pl-1.5 leading-tight text-[9.5px]">
+                  {detail.price}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

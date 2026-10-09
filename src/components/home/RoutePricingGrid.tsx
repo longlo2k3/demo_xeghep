@@ -1,85 +1,51 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { POPULAR_ROUTES, type RouteItem } from "@/data/routes";
 import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
 
-const ROUTE_LOCATION_IMAGES: Record<string, string[]> = {
-  "hai-phong-bac-ninh-bac-giang": [
-    "/HaiPhong.webp",
-    "/BacNinh.webp",
-    "/BacGiang.webp",
-  ],
-  "hai-phong-ha-noi-noi-bai": ["/HaiPhong.webp", "/HaNoi.webp", "/NoiBai.webp"],
-  "hai-phong-ha-long": ["/HaiPhong.webp", "/HaLong.webp"],
-  "hai-phong-mong-cai": ["/HaiPhong.webp", "/MongCai.webp"],
-  "ha-long-bac-ninh-bac-giang": [
-    "/HaLong.webp",
-    "/BacNinh.webp",
-    "/BacGiang.webp",
-  ],
-  "ha-noi-mong-cai": ["/HaNoi.webp", "/MongCai.webp"],
-  "ha-noi-ha-long": ["/HaNoi.webp", "/HaLong.webp"],
-  "hai-phong-hai-duong": ["/HaiPhong.webp", "/HaNoi.webp"],
-  "hai-phong-thai-nguyen": ["/HaiPhong.webp", "/BacNinh.webp", "/HaNoi.webp"],
+const ROUTE_LOCATION_IMAGES: Record<string, string> = {
+  "hai-phong-bac-ninh-bac-giang": "/HaiPhong.webp",
+  "hai-phong-ha-noi-noi-bai": "/NoiBai.webp",
+  "hai-phong-ha-long": "/HaLong.webp",
+  "hai-phong-mong-cai": "/MongCai.webp",
+  "ha-long-bac-ninh-bac-giang": "/BacNinh.webp",
+  "ha-noi-mong-cai": "/MongCai.webp",
+  "ha-noi-ha-long": "/HaLong.webp",
+  "hai-phong-hai-duong": "/HaiPhong.webp",
+  "hai-phong-thai-nguyen": "/BacNinh.webp",
 };
 
 export function RoutePricingCard({ route }: { route: RouteItem }) {
-  const images = ROUTE_LOCATION_IMAGES[route.slug] || [
-    "/HaiPhong.webp",
-    "/HaNoi.webp",
-  ];
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  useEffect(() => {
-    if (images.length <= 1) return;
-    const interval = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [images.length]);
+  const bgImage = ROUTE_LOCATION_IMAGES[route.slug] || "/HaiPhong.webp";
 
   return (
     <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-md hover:shadow-2xl border border-slate-200 hover:border-red-500 group flex flex-col justify-between bg-slate-950 transition-all duration-300">
-      {/* Background Slideshow: Chỉ render ảnh hiện tại để tiết kiệm DOM và băng thông mạng mobile */}
+      {/* Background Image: Server-rendered static image with hover zoom */}
       <div className="absolute inset-0 z-0">
         <Image
-          key={images[activeIdx]}
-          src={images[activeIdx]}
+          src={bgImage}
           alt={`Tuyến xe ghép ${route.name}`}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
           loading="lazy"
           decoding="async"
-          className="object-cover object-center transition-opacity duration-700 transform group-hover:scale-105 pointer-events-none"
+          className="object-cover object-center transition-transform duration-700 transform group-hover:scale-105 pointer-events-none"
         />
 
         {/* Deep Gradient Scrim Overlay for Readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/90 to-slate-950/40 pointer-events-none" />
       </div>
 
-      {/* Top Header Information: Badges & Slideshow Dots */}
+      {/* Top Header Information: Badges */}
       <div className="relative z-10 p-1.5 sm:p-4 flex items-center justify-between gap-1">
         <span className="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-950/70 backdrop-blur-md text-[9px] sm:text-xs font-bold text-white border border-white/20 shadow-sm">
           <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-sky-400 flex-shrink-0" />
           <span className="truncate">{route.duration}</span>
         </span>
 
-        {/* Dots indicating current slide */}
-        <div className="flex items-center gap-0.5 sm:gap-1 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/15">
-          {images.map((_, i) => (
-            <span
-              key={i}
-              className={`h-1 sm:h-1.5 rounded-full transition-all duration-500 ${
-                i === activeIdx
-                  ? "w-2.5 sm:w-4 bg-amber-400"
-                  : "w-1 sm:w-1.5 bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
+        <span className="inline-block px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[8px] sm:text-[10px] font-bold border border-emerald-400/30">
+          Chạy 24/7
+        </span>
       </div>
 
       {/* Main Content Area: Route Title, Price, Breakdown & CTA */}

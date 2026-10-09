@@ -108,6 +108,8 @@ export function Header() {
                   onMouseEnter={() => setRoutesDropdownOpen(true)}
                   className="flex items-center gap-1 px-3 py-2 text-sm font-semibold text-slate-700 hover:text-red-600 hover:bg-red-50/60 rounded-lg transition-colors cursor-pointer"
                   aria-expanded={routesDropdownOpen}
+                  aria-haspopup="true"
+                  aria-label="Danh mục các tuyến liên tỉnh"
                 >
                   <span>Các tuyến liên tỉnh</span>
                   <ChevronDown

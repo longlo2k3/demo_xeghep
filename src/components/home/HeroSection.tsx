@@ -1,7 +1,21 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { Phone, Star, ShieldCheck, CheckCircle2, Award, Zap } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
-import { BookingForm } from "@/components/booking/BookingForm";
+
+const BookingForm = dynamic(
+  () => import("@/components/booking/BookingForm").then((mod) => mod.BookingForm),
+  {
+    loading: () => (
+      <div className="w-full min-h-[460px] rounded-2xl bg-slate-900/60 border border-white/10 animate-pulse flex flex-col items-center justify-center text-slate-400 gap-3 p-6 backdrop-blur-sm">
+        <div className="w-8 h-8 rounded-full border-2 border-red-500 border-t-transparent animate-spin" />
+        <span className="text-xs font-semibold text-slate-300">
+          Đang chuẩn bị biểu mẫu đặt xe...
+        </span>
+      </div>
+    ),
+  }
+);
 
 export function HeroSection() {
   return (

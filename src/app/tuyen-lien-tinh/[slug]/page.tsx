@@ -4,7 +4,12 @@ import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getRoute, getRoutes, getCompanySettings, isNotFoundError } from "@/lib/api";
+import {
+  getRoute,
+  getRoutes,
+  getCompanySettings,
+  isNotFoundError,
+} from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { buildRouteServiceSchema } from "@/lib/schema";
 import { BookingForm } from "@/components/booking/BookingForm";
@@ -190,14 +195,20 @@ export default async function RouteDetailPage({ params }: Props) {
                   <tr className="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-200 text-xs sm:text-sm">
                     <th className="py-3 px-3 sm:py-3.5 sm:px-4">
                       <span className="sm:hidden">Loại hình DV</span>
-                      <span className="hidden sm:inline">Loại Hình Dịch Vụ</span>
+                      <span className="hidden sm:inline">
+                        Loại Hình Dịch Vụ
+                      </span>
                     </th>
-                    <th className="py-3.5 px-4 hidden sm:table-cell">Đặc Điểm & Số Lượng</th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">
+                      Đặc Điểm & Số Lượng
+                    </th>
                     <th className="py-3 px-3 sm:py-3.5 sm:px-4 text-right sm:text-left">
                       <span className="sm:hidden">Giá</span>
                       <span className="hidden sm:inline">Mức Giá Niêm Yết</span>
                     </th>
-                    <th className="py-3.5 px-4 hidden sm:table-cell">Chính Sách Đón Trả</th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">
+                      Chính Sách Đón Trả
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -262,29 +273,38 @@ export default async function RouteDetailPage({ params }: Props) {
                 <MapPin className="w-5 h-5 text-red-600" />
                 <span>Khu Vực Đón & Trả Khách Tuyến {route.name}</span>
               </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
+                {/* Điểm đón */}
+                <section aria-labelledby="pickup-heading">
+                  <h3
+                    id="pickup-heading"
+                    className="mb-3 font-bold text-slate-900"
+                  >
+                    Điểm đón thuận tiện
+                  </h3>
 
-              <div className="space-y-4 text-sm text-slate-600">
-                <div>
-                  <strong className="text-slate-900 block mb-1">
-                    Điểm đón thuận tiện:
-                  </strong>
-                  <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm">
-                    {route.pickups.map((p, i) => (
-                      <li key={i}>{p}</li>
+                  <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed sm:text-sm">
+                    {route.pickups.map((pickup, index) => (
+                      <li key={`${pickup}-${index}`}>{pickup}</li>
                     ))}
                   </ul>
-                </div>
+                </section>
 
-                <div className="pt-2 border-t border-slate-100">
-                  <strong className="text-slate-900 block mb-1">
-                    Điểm trả tận nơi:
-                  </strong>
-                  <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm">
-                    {route.dropoffs.map((d, i) => (
-                      <li key={i}>{d}</li>
+                {/* Điểm trả */}
+                <section aria-labelledby="dropoff-heading">
+                  <h3
+                    id="dropoff-heading"
+                    className="mb-3 font-bold text-slate-900"
+                  >
+                    Điểm trả tận nơi
+                  </h3>
+
+                  <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed sm:text-sm">
+                    {route.dropoffs.map((dropoff, index) => (
+                      <li key={`${dropoff}-${index}`}>{dropoff}</li>
                     ))}
                   </ul>
-                </div>
+                </section>
               </div>
             </div>
 
@@ -320,11 +340,11 @@ export default async function RouteDetailPage({ params }: Props) {
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Tuyến xe ghép <strong>{route.name}</strong> là dịch vụ tiện chuyến
-              chất lượng cao của {info.name}, đáp ứng nhu cầu đi lại
-              công tác, thăm người thân, khám chữa bệnh và du lịch. Thay vì phải
-              di chuyển ra bến xe và chờ đợi xe khách đông đúc, quý khách chỉ
-              cần ngồi tại nhà, tài xế sẽ đến tận cửa đón đúng giờ và đưa quý
-              khách đến chính xác địa chỉ cần tới.
+              chất lượng cao của {info.name}, đáp ứng nhu cầu đi lại công tác,
+              thăm người thân, khám chữa bệnh và du lịch. Thay vì phải di chuyển
+              ra bến xe và chờ đợi xe khách đông đúc, quý khách chỉ cần ngồi tại
+              nhà, tài xế sẽ đến tận cửa đón đúng giờ và đưa quý khách đến chính
+              xác địa chỉ cần tới.
             </p>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Toàn bộ các xe phục vụ tuyến đều là xe đời mới (sedan 4-5 chỗ và

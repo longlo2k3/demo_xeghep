@@ -19,7 +19,7 @@ const CMS =
     ? process.env.CMS_URL ?? "http://localhost:3001"
     : process.env.NEXT_PUBLIC_CMS_URL ?? "";
 
-const REVALIDATE_SECONDS = 60;
+const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 60;
 
 export type CmsErrorCode =
   | "VALIDATION_ERROR"

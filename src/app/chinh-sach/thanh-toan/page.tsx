@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { COMPANY_INFO, PAYMENT_METHODS } from "@/data/company-info";
+import { getCompanySettings } from "@/lib/api";
 import { CreditCard, Banknote, ShieldCheck, CheckCircle2, Phone } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
@@ -11,7 +12,14 @@ export const metadata: Metadata = constructMetadata({
   path: "/chinh-sach/thanh-toan",
 });
 
-export default function PaymentPolicyPage() {
+export default async function PaymentPolicyPage() {
+  const companySettings = await getCompanySettings();
+  const info = companySettings.info ?? COMPANY_INFO;
+  const paymentMethods =
+    companySettings.paymentMethods && companySettings.paymentMethods.length > 0
+      ? companySettings.paymentMethods
+      : PAYMENT_METHODS;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Chính sách thanh toán", path: "/chinh-sach/thanh-toan" },
@@ -31,7 +39,7 @@ export default function PaymentPolicyPage() {
               Chính Sách Thanh Toán
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
-              {COMPANY_INFO.name} áp dụng chính sách thanh toán linh hoạt, minh bạch và an toàn tuyệt đối cho khách hàng.
+              {info.name} áp dụng chính sách thanh toán linh hoạt, minh bạch và an toàn tuyệt đối cho khách hàng.
             </p>
           </div>
 
@@ -59,7 +67,7 @@ export default function PaymentPolicyPage() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {PAYMENT_METHODS.map((method) => (
+                {paymentMethods.map((method) => (
                   <div key={method.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
                       {method.id === "tien-mat" ? <Banknote className="w-5 h-5" /> : <CreditCard className="w-5 h-5" />}
@@ -93,11 +101,11 @@ export default function PaymentPolicyPage() {
                 Cần hóa đơn VAT hoặc xuất chứng từ thanh toán cho doanh nghiệp?
               </p>
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs"
               >
                 <Phone className="w-3.5 h-3.5" />
-                <span>Liên hệ Hotline: {COMPANY_INFO.hotline}</span>
+                <span>Liên hệ Hotline: {info.hotline}</span>
               </a>
             </div>
           </div>

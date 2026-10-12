@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { POPULAR_ROUTES, BANNER_TOP_ROUTES } from "../src/data/routes";
+import { POPULAR_ROUTES, BANNER_TOP_ROUTES } from "./fixtures/routes";
 
 describe("Data Layer & Pricing Rules per spec_v2.md", () => {
   it("POPULAR_ROUTES contains all 9 routes from spec_v2.md", () => {

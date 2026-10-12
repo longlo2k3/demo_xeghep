@@ -13,42 +13,39 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3001",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "3001",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "xegheplientinh.vn",
+        pathname: "/media/**",
+      },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: "/dich-vu-xe-ghep",
-        destination: "/tuyen-lien-tinh",
-        permanent: true,
-      },
-      {
-        source: "/bang-gia",
-        destination: "/tuyen-lien-tinh",
-        permanent: true,
-      },
-      {
-        source: "/taxi-dua-don-san-bay-noi-bai",
-        destination: "/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai",
-        permanent: true,
-      },
-      {
-        source: "/taxi-duong-dai",
-        destination: "/tuyen-lien-tinh",
-        permanent: true,
-      },
-      {
-        source: "/dang-ky-doi-tac",
-        destination: "/lien-he",
-        permanent: true,
-      },
-    ];
-  },
+  // 5 redirect cứng đã chuyển sang middleware + GET /api/v1/redirects (CMS).
   async headers() {
     return [
       {
         source: "/(.*)",
         headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
           {
             key: "X-Content-Type-Options",
             value: "nosniff",
@@ -62,6 +59,15 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
         ],
+      },
+    ];
+  },
+  async rewrites() {
+    const cmsUrl = process.env.CMS_URL ?? "http://localhost:3001";
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${cmsUrl}/api/v1/:path*`,
       },
     ];
   },

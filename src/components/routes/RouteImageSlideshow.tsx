@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
-import { type RouteItem } from "@/data/routes";
+import { type RouteItem } from "@/lib/types";
 
 export interface RouteSlideItem {
   src: string;

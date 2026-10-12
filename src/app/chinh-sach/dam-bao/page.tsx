@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { COMPANY_INFO, SIX_COMMITMENTS } from "@/data/company-info";
+import { getCompanySettings } from "@/lib/api";
 import { ShieldCheck, Award, CheckCircle2, Phone, AlertCircle } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
@@ -11,7 +12,14 @@ export const metadata: Metadata = constructMetadata({
   path: "/chinh-sach/dam-bao",
 });
 
-export default function AssurancePolicyPage() {
+export default async function AssurancePolicyPage() {
+  const companySettings = await getCompanySettings();
+  const info = companySettings.info ?? COMPANY_INFO;
+  const commitments =
+    companySettings.commitments && companySettings.commitments.length > 0
+      ? companySettings.commitments
+      : SIX_COMMITMENTS;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Chính sách đảm bảo", path: "/chinh-sach/dam-bao" },
@@ -45,7 +53,7 @@ export default function AssurancePolicyPage() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-red-100 leading-relaxed">
-                Chúng tôi khẳng định chất lượng vượt trội bằng cam kết rõ ràng: nếu chuyến đi không đảm bảo chất lượng như đã thỏa thuận (nhồi nhét khách, tự ý bỏ khách, lái xe có thái độ thiếu tôn trọng, xe không đúng tiêu chuẩn sạch sẽ mát mẻ), {COMPANY_INFO.name} sẵn sàng <strong>hoàn tiền 100% và đền 200%</strong> cước phí cho hành khách.
+                Chúng tôi khẳng định chất lượng vượt trội bằng cam kết rõ ràng: nếu chuyến đi không đảm bảo chất lượng như đã thỏa thuận (nhồi nhét khách, tự ý bỏ khách, lái xe có thái độ thiếu tôn trọng, xe không đúng tiêu chuẩn sạch sẽ mát mẻ), {info.name} sẵn sàng <strong>hoàn tiền 100% và đền 200%</strong> cước phí cho hành khách.
               </p>
             </div>
 
@@ -57,7 +65,7 @@ export default function AssurancePolicyPage() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {SIX_COMMITMENTS.map((com, idx) => (
+                {commitments.map((com, idx) => (
                   <div key={com.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
@@ -78,7 +86,7 @@ export default function AssurancePolicyPage() {
                 <span>Quy Định Đổi Và Hủy Chuyến Miễn Phí</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Khi có sự thay đổi lịch trình công tác, việc gia đình hoặc vấn đề phát sinh đột xuất, quý khách chỉ cần thông báo cho tổng đài qua hotline <strong>{COMPANY_INFO.hotline}</strong> trước giờ xe chạy ít nhất 30 phút. Chúng tôi hỗ trợ dời giờ hoặc hủy chuyến hoàn toàn miễn phí, không thu phí phạt hủy chuyến.
+                Khi có sự thay đổi lịch trình công tác, việc gia đình hoặc vấn đề phát sinh đột xuất, quý khách chỉ cần thông báo cho tổng đài qua hotline <strong>{info.hotline}</strong> trước giờ xe chạy ít nhất 30 phút. Chúng tôi hỗ trợ dời giờ hoặc hủy chuyến hoàn toàn miễn phí, không thu phí phạt hủy chuyến.
               </p>
             </section>
 
@@ -89,11 +97,11 @@ export default function AssurancePolicyPage() {
                 <span>Kênh tiếp nhận phản ánh & hỗ trợ bảo hành dịch vụ 24/7</span>
               </div>
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow"
               >
                 <Phone className="w-3.5 h-3.5" />
-                <span>Hotline 24/7: {COMPANY_INFO.hotline}</span>
+                <span>Hotline 24/7: {info.hotline}</span>
               </a>
             </div>
           </div>

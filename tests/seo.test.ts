@@ -41,4 +41,15 @@ describe("SEO Utilities & Metadata Compliance", () => {
       follow: false,
     });
   });
+
+  it("robots.ts never disallows noindex paths on production", async () => {
+    const robotsModule = await import("../src/app/robots");
+    const robotsFn = robotsModule.default;
+    const prodRobots = robotsFn();
+    const rules = Array.isArray(prodRobots.rules) ? prodRobots.rules[0] : prodRobots.rules;
+    const disallowList = Array.isArray(rules?.disallow) ? rules.disallow : [rules?.disallow];
+
+    // Strictly adheres to AGENTS.md rule 1.5: do not disallow pages with noindex
+    expect(disallowList).not.toContain("/dat-xe/thanh-cong");
+  });
 });

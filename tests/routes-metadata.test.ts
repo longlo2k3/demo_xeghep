@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { POPULAR_ROUTES } from "../src/data/routes";
+import { POPULAR_ROUTES } from "./fixtures/routes";
 import { ARTICLES } from "../src/data/articles";
 import { constructMetadata, SITE_DOMAIN, BRAND_NAME } from "../src/lib/seo";
 

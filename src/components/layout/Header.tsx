@@ -4,10 +4,18 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Phone, ChevronDown, Menu, X, Car } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
-import { POPULAR_ROUTES } from "@/data/routes";
+import type { CompanyInfoData } from "@/lib/api";
+import type { RouteItem } from "@/lib/types";
 import { TopBanner } from "./TopBanner";
 
-export function Header() {
+export function Header({
+  routes,
+  companyInfo = COMPANY_INFO,
+}: {
+  routes: RouteItem[];
+  companyInfo?: CompanyInfoData;
+}) {
+  const info = companyInfo ?? COMPANY_INFO;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [routesDropdownOpen, setRoutesDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -28,7 +36,7 @@ export function Header() {
 
   return (
     <>
-      <TopBanner />
+      <TopBanner companyInfo={info} />
       {/* Accessible Skip Link per AGENTS.md rule 3.1 & WCAG 2.1 AA */}
       <a
         href="#main-content"
@@ -75,7 +83,7 @@ export function Header() {
                   </span>
                   {/* Hotline directly below logo per spec_v2.md 2.1 */}
                   <span className="text-xs sm:text-sm font-bold text-red-600 tracking-wide mt-1">
-                    {COMPANY_INFO.hotline}
+                    {info.hotline}
                   </span>
                 </div>
               </Link>
@@ -132,7 +140,7 @@ export function Header() {
                     </Link>
 
                     <div className="max-h-96 overflow-y-auto py-1">
-                      {POPULAR_ROUTES.map((route) => (
+                      {routes.map((route) => (
                         <Link
                           key={route.slug}
                           href={`/tuyen-lien-tinh/${route.slug}`}
@@ -168,21 +176,21 @@ export function Header() {
             {/* Desktop CTA: Red Button Right */}
             <div className="hidden lg:flex items-center">
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-extrabold text-white bg-red-600 hover:bg-red-700 active:bg-red-800 shadow-md shadow-red-600/30 transition-all hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 cursor-pointer"
-                aria-label={`Gọi ngay tổng đài ${COMPANY_INFO.hotline}`}
+                aria-label={`Gọi ngay tổng đài ${info.hotline}`}
               >
                 <Phone className="w-4 h-4 animate-pulse" aria-hidden="true" />
-                <span>GỌI NGAY: {COMPANY_INFO.hotline}</span>
+                <span>GỌI NGAY: {info.hotline}</span>
               </a>
             </div>
 
             {/* Mobile: Quick Call Button Right */}
             <div className="flex lg:hidden items-center">
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-white bg-red-600 hover:bg-red-700"
-                aria-label={`Gọi ngay ${COMPANY_INFO.hotline}`}
+                aria-label={`Gọi ngay ${info.hotline}`}
               >
                 <Phone className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Gọi ngay</span>
@@ -222,7 +230,7 @@ export function Header() {
             </Link>
 
             <div className="pl-4 space-y-1 border-l-2 border-red-200 ml-2 py-1">
-              {POPULAR_ROUTES.map((route) => (
+              {routes.map((route) => (
                 <Link
                   key={route.slug}
                   href={`/tuyen-lien-tinh/${route.slug}`}
@@ -252,11 +260,11 @@ export function Header() {
 
             <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="w-full text-center py-3 px-4 rounded-xl text-base font-bold text-white bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2 shadow-md"
               >
                 <Phone className="w-4 h-4" aria-hidden="true" />
-                <span>GỌI NGAY: {COMPANY_INFO.hotline}</span>
+                <span>GỌI NGAY: {info.hotline}</span>
               </a>
             </div>
           </nav>

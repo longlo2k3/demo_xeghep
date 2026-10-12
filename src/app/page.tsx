@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { RoutePricingGrid } from "@/components/home/RoutePricingGrid";
 import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { IntroTeaser } from "@/components/home/IntroTeaser";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 
 /**
  * Metadata for Homepage
@@ -18,17 +19,23 @@ export const metadata: Metadata = constructMetadata({
   path: "/",
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const bannerRoutes = routes.filter((route) => route.isBannerTop);
+
   return (
     <>
       {/* Section 1 — Banner Bảng Giá Các Tuyến Chính */}
-      <PriceBannerSection />
+      <PriceBannerSection routes={bannerRoutes} />
 
       {/* Section 2 — Hero + Đặt Xe Trực Tuyến (Gộp chung vào 1 section tối ưu) */}
-      <HeroSection />
+      <HeroSection routes={routes} companyInfo={companySettings.info} />
 
       {/* Section 3 — Bảng Giá Xe Ghép (Lưới 9 RouteCard) */}
-      <RoutePricingGrid />
+      <RoutePricingGrid routes={routes} />
 
       {/* Section 4 — Vì Sao Chọn Xe Ghép Liên Tỉnh (Khung vàng) */}
       <WhyChooseUs />

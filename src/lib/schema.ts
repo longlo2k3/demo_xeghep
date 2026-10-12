@@ -1,4 +1,5 @@
 import { SITE_DOMAIN, BRAND_NAME } from "./seo";
+import type { CompanySettingsData } from "./api";
 
 export interface BreadcrumbItem {
   name: string;
@@ -28,15 +29,41 @@ export interface ArticleSchemaInput {
  * Builds the master Organization and TaxiService Schema.org @graph definition
  * Accurately represents Xe Ghép Liên Tỉnh (xegheplientinh.vn) based on spec_v2.md
  */
-export function buildGlobalBusinessSchema() {
+export function buildGlobalBusinessSchema(settings?: CompanySettingsData) {
+  const telephone = settings?.info?.hotlineRaw
+    ? `+84${settings.info.hotlineRaw.replace(/^0/, "")}`
+    : "+84962298293";
+  const orgName = settings?.info?.name || "Xe Ghép Liên Tỉnh";
+  const brandName = settings?.info?.brandName || BRAND_NAME;
+  const serviceType =
+    settings?.info?.summary ||
+    "Dịch vụ xe ghép, xe tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang";
+  const priceRange = settings?.priceRange || "150.000đ - 2.500.000đ";
+  const areaServed =
+    settings?.areaServed && settings.areaServed.length > 0
+      ? settings.areaServed.map((item) => ({
+          "@type": item.type || "City",
+          name: item.name,
+        }))
+      : [
+          { "@type": "City", name: "Hải Phòng" },
+          { "@type": "City", name: "Hà Nội" },
+          { "@type": "City", name: "Hạ Long" },
+          { "@type": "City", name: "Móng Cái" },
+          { "@type": "AdministrativeArea", name: "Bắc Ninh" },
+          { "@type": "AdministrativeArea", name: "Bắc Giang" },
+          { "@type": "AdministrativeArea", name: "Hải Dương" },
+          { "@type": "AdministrativeArea", name: "Thái Nguyên" },
+        ];
+
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
         "@id": `${SITE_DOMAIN}/#organization`,
-        name: "Xe Ghép Liên Tỉnh",
-        alternateName: BRAND_NAME,
+        name: orgName,
+        alternateName: brandName,
         url: SITE_DOMAIN,
         logo: {
           "@type": "ImageObject",
@@ -47,7 +74,7 @@ export function buildGlobalBusinessSchema() {
         contactPoint: [
           {
             "@type": "ContactPoint",
-            telephone: "+84962298293",
+            telephone,
             contactType: "customer service",
             areaServed: "VN",
             availableLanguage: ["Vietnamese"],
@@ -57,31 +84,21 @@ export function buildGlobalBusinessSchema() {
       {
         "@type": "TaxiService",
         "@id": `${SITE_DOMAIN}/#taxiservice`,
-        name: "Dịch Vụ Xe Ghép Liên Tỉnh",
-        serviceType:
-          "Dịch vụ xe ghép, xe tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang",
+        name: `Dịch Vụ ${orgName}`,
+        serviceType,
         provider: {
           "@id": `${SITE_DOMAIN}/#organization`,
         },
-        areaServed: [
-          { "@type": "City", name: "Hải Phòng" },
-          { "@type": "City", name: "Hà Nội" },
-          { "@type": "City", name: "Hạ Long" },
-          { "@type": "City", name: "Móng Cái" },
-          { "@type": "AdministrativeArea", name: "Bắc Ninh" },
-          { "@type": "AdministrativeArea", name: "Bắc Giang" },
-          { "@type": "AdministrativeArea", name: "Hải Dương" },
-          { "@type": "AdministrativeArea", name: "Thái Nguyên" },
-        ],
+        areaServed,
         hoursAvailable: "Mo-Su 00:00-24:00",
-        telephone: "+84962298293",
-        priceRange: "150.000đ - 2.500.000đ",
+        telephone,
+        priceRange,
       },
       {
         "@type": "WebSite",
         "@id": `${SITE_DOMAIN}/#website`,
         url: SITE_DOMAIN,
-        name: BRAND_NAME,
+        name: brandName,
         publisher: {
           "@id": `${SITE_DOMAIN}/#organization`,
         },
@@ -96,6 +113,7 @@ export function buildGlobalBusinessSchema() {
  */
 export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
   return {
+    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",

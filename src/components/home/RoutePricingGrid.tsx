@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { POPULAR_ROUTES, type RouteItem } from "@/data/routes";
+import { type RouteItem } from "@/lib/types";
 import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
 
 const ROUTE_LOCATION_IMAGES: Record<string, string> = {
@@ -130,7 +130,7 @@ export function RoutePricingCard({ route }: { route: RouteItem }) {
   );
 }
 
-export function RoutePricingGrid() {
+export function RoutePricingGrid({ routes }: { routes: RouteItem[] }) {
   return (
     <section className="py-8 sm:py-20 bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -150,7 +150,7 @@ export function RoutePricingGrid() {
 
         {/* Lưới 9 RouteCard: 2 cột trên mobile, 2 cột trên md, 3 cột trên lg */}
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6">
-          {POPULAR_ROUTES.map((route) => (
+          {routes.map((route) => (
             <RoutePricingCard key={route.slug} route={route} />
           ))}
         </div>

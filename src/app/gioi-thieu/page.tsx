@@ -4,7 +4,7 @@ import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { AboutWhyChooseUs } from "@/components/about/AboutWhyChooseUs";
 import { COMPANY_INFO } from "@/data/company-info";
-import { POPULAR_ROUTES } from "@/data/routes";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 import {
   Users,
   Clock,
@@ -21,7 +21,13 @@ export const metadata: Metadata = constructMetadata({
   path: "/gioi-thieu",
 });
 
-export default function GioiThieuPage() {
+export default async function GioiThieuPage() {
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Giới thiệu", path: "/gioi-thieu" },
@@ -56,11 +62,11 @@ export default function GioiThieuPage() {
               <span>Về Chúng Tôi</span>
             </h2>
             <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-              <strong>{COMPANY_INFO.name}</strong> là đơn vị tiên phong cung cấp
+              <strong>{info.name}</strong> là đơn vị tiên phong cung cấp
               giải pháp xe ghép, xe tiện chuyến và bao xe riêng cao cấp kết nối
               các tỉnh thành trọng điểm:{" "}
               <strong>
-                Móng Cái – Hạ Long – Hải Phòng – Bắc Ninh – Bắc Giang – Hà Nội
+                {info.coverage || "Móng Cái – Hạ Long – Hải Phòng – Bắc Ninh – Bắc Giang – Hà Nội"}
               </strong>
               .
             </p>
@@ -163,7 +169,7 @@ export default function GioiThieuPage() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {POPULAR_ROUTES.map((route) => (
+              {routes.map((route) => (
                 <Link
                   key={route.slug}
                   href={`/tuyen-lien-tinh/${route.slug}`}
@@ -238,7 +244,7 @@ export default function GioiThieuPage() {
                   Gọi / Điền Form
                 </h3>
                 <p className="text-[11px] text-slate-600">
-                  Liên hệ hotline {COMPANY_INFO.hotline} hoặc điền form.
+                  Liên hệ hotline {info.hotline} hoặc điền form.
                 </p>
               </div>
 
@@ -281,7 +287,7 @@ export default function GioiThieuPage() {
           </div>
 
           {/* 6. Cam kết vàng (AboutWhyChooseUs) */}
-          <AboutWhyChooseUs />
+          <AboutWhyChooseUs commitments={companySettings.commitments} />
         </div>
       </div>
     </>

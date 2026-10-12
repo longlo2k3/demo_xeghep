@@ -3,10 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
-import { ARTICLES } from "@/data/articles";
-import { POPULAR_ROUTES } from "@/data/routes";
+import { ARTICLES as FALLBACK_ARTICLES } from "@/data/articles";
+import { getArticles, getRoutes, getCompanySettings } from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { Calendar, User, ArrowRight, Tag, Phone, ShieldCheck } from "lucide-react";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: "Tin Tức & Cẩm Nang Xe Ghép Liên Tỉnh 2026",
@@ -15,14 +17,26 @@ export const metadata: Metadata = constructMetadata({
   path: "/tin-tuc",
 });
 
-export default function NewsIndexPage() {
+export default async function NewsIndexPage() {
+  const [routes, articlesRes, companySettings] = await Promise.all([
+    getRoutes().catch(() => []),
+    getArticles({ limit: 12 }).catch(() => null),
+    getCompanySettings(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
+
+  const articles =
+    articlesRes?.items && articlesRes.items.length > 0
+      ? articlesRes.items
+      : FALLBACK_ARTICLES;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Tin tức", path: "/tin-tuc" },
   ];
 
-  const featuredArticle = ARTICLES[0];
-  const otherArticles = ARTICLES.slice(1);
+  const featuredArticle = articles[0];
+  const otherArticles = articles.slice(1);
 
   return (
     <>
@@ -106,59 +120,64 @@ export default function NewsIndexPage() {
               )}
 
               {/* Lưới các bài viết khác */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {otherArticles.map((article) => (
-                  <article
-                    key={article.slug}
-                    className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group"
-                  >
-                    {article.image && (
-                      <Link
-                        href={`/tin-tuc/${article.slug}`}
-                        className="block relative aspect-[16/9] w-full overflow-hidden bg-slate-100"
-                      >
-                        <Image
-                          src={article.image}
-                          alt={article.title}
-                          fill
-                          sizes="(max-width: 640px) 100vw, 400px"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </Link>
-                    )}
-                    <div className="p-5 space-y-4 flex flex-col justify-between flex-grow">
-                      <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs text-slate-500">
-                        <span className="font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded text-[11px]">
-                          {article.categoryName}
-                        </span>
-                        <span>{new Date(article.publishedAt).toLocaleDateString("vi-VN")}</span>
-                      </div>
-
-                      <h3 className="text-base font-bold text-slate-900 hover:text-red-600 transition-colors leading-snug">
-                        <Link href={`/tin-tuc/${article.slug}`}>
-                          {article.title}
+              <div className="space-y-4">
+                <h2 className="text-xl font-black text-slate-900 uppercase">
+                  Cẩm Nang & Bài Viết Mới Nhất
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {otherArticles.map((article) => (
+                    <article
+                      key={article.slug}
+                      className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group"
+                    >
+                      {article.image && (
+                        <Link
+                          href={`/tin-tuc/${article.slug}`}
+                          className="block relative aspect-[16/9] w-full overflow-hidden bg-slate-100"
+                        >
+                          <Image
+                            src={article.image}
+                            alt={article.title}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 400px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
                         </Link>
-                      </h3>
+                      )}
+                      <div className="p-5 space-y-4 flex flex-col justify-between flex-grow">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs text-slate-500">
+                            <span className="font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded text-[11px]">
+                              {article.categoryName}
+                            </span>
+                            <span>{new Date(article.publishedAt).toLocaleDateString("vi-VN")}</span>
+                          </div>
 
-                      <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                        {article.excerpt}
-                      </p>
-                    </div>
+                          <h3 className="text-base font-bold text-slate-900 hover:text-red-600 transition-colors leading-snug">
+                            <Link href={`/tin-tuc/${article.slug}`}>
+                              {article.title}
+                            </Link>
+                          </h3>
 
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="text-slate-500 truncate pr-2">{article.author}</span>
-                      <Link
-                        href={`/tin-tuc/${article.slug}`}
-                        className="font-bold text-red-600 hover:text-red-700 flex items-center gap-1 whitespace-nowrap"
-                      >
-                        <span>Chi tiết</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </div>
-                  </div>
-                  </article>
-                ))}
+                          <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                            {article.excerpt}
+                          </p>
+                        </div>
+
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                          <span className="text-slate-500 truncate pr-2">{article.author}</span>
+                          <Link
+                            href={`/tin-tuc/${article.slug}`}
+                            className="font-bold text-red-600 hover:text-red-700 flex items-center gap-1 whitespace-nowrap"
+                          >
+                            <span>Chi tiết</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -177,19 +196,19 @@ export default function NewsIndexPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-red-950/50 to-black/40 pointer-events-none" />
 
                 <div className="relative z-10 space-y-3">
-                  <h3 className="text-lg font-black uppercase drop-shadow-sm">
+                  <h2 className="text-lg font-black uppercase drop-shadow-sm">
                     Tổng Đài Đặt Xe 24/7
-                  </h3>
+                  </h2>
                   <p className="text-xs text-red-100 leading-relaxed">
                     Đón trả tận nhà, xe chạy liên tục cả ngày lẫn đêm. Gọi ngay để có xe trong 15-30 phút.
                   </p>
                   <div className="pt-2">
                     <a
-                      href={COMPANY_INFO.hotlineHref}
+                      href={info.hotlineHref}
                       className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-white text-red-700 font-black text-sm shadow-md hover:bg-red-50 transition-colors"
                     >
                       <Phone className="w-4 h-4 animate-pulse" />
-                      <span>GỌI NGAY: {COMPANY_INFO.hotline}</span>
+                      <span>GỌI NGAY: {info.hotline}</span>
                     </a>
                   </div>
                 </div>
@@ -197,13 +216,13 @@ export default function NewsIndexPage() {
 
               {/* Tuyến nổi bật */}
               <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 space-y-4">
-                <h3 className="text-base font-black text-slate-900 uppercase flex items-center gap-2">
+                <h2 className="text-base font-black text-slate-900 uppercase flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-red-600" />
                   <span>Tuyến Xe Ghép Nổi Bật</span>
-                </h3>
+                </h2>
 
                 <ul className="space-y-2.5 text-xs">
-                  {POPULAR_ROUTES.slice(0, 6).map((route) => (
+                  {routes.slice(0, 6).map((route) => (
                     <li key={route.slug}>
                       <Link
                         href={`/tuyen-lien-tinh/${route.slug}`}

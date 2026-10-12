@@ -4,7 +4,7 @@ import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { POPULAR_ROUTES } from "@/data/routes";
+import { getRoute, getRoutes, getCompanySettings, isNotFoundError } from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { buildRouteServiceSchema } from "@/lib/schema";
 import { BookingForm } from "@/components/booking/BookingForm";
@@ -26,9 +26,12 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-// SSG Pre-rendering for all 9 routes
+export const revalidate = 60;
+
+// SSG Pre-rendering for all routes
 export async function generateStaticParams() {
-  return POPULAR_ROUTES.map((route) => ({
+  const routes = await getRoutes({ fields: "slug" });
+  return routes.map((route) => ({
     slug: route.slug,
   }));
 }
@@ -36,24 +39,39 @@ export async function generateStaticParams() {
 // Next.js 15+ generateMetadata with awaited params
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const route = POPULAR_ROUTES.find((r) => r.slug === slug);
 
-  if (!route) return {};
+  try {
+    const route = await getRoute(slug);
 
-  return constructMetadata({
-    title: `Xe Ghép ${route.name} - Giá Từ ${route.priceShare1Text}`,
-    description: `Dịch vụ xe tiện chuyến và xe ghép ${route.name} đón trả tận nhà. Giá ghép chỉ từ ${route.priceShare1Text}, bao xe riêng chỉ từ ${route.priceCharter4to5Text}. Xe đời mới, phục vụ 24/7.`,
-    path: `/tuyen-lien-tinh/${route.slug}`,
-  });
+    return constructMetadata({
+      title: `Xe Ghép ${route.name} - Giá Từ ${route.priceShare1Text}`,
+      description: `Dịch vụ xe tiện chuyến và xe ghép ${route.name} đón trả tận nhà. Giá ghép chỉ từ ${route.priceShare1Text}, bao xe riêng chỉ từ ${route.priceCharter4to5Text}. Xe đời mới, phục vụ 24/7.`,
+      path: `/tuyen-lien-tinh/${route.slug}`,
+    });
+  } catch (error) {
+    if (isNotFoundError(error)) return {};
+    throw error;
+  }
 }
 
 export default async function RouteDetailPage({ params }: Props) {
   const { slug } = await params;
-  const route = POPULAR_ROUTES.find((r) => r.slug === slug);
 
-  if (!route) {
-    notFound(); // True HTTP 404 per AGENTS.md rule 4.4 & 14.1
+  let route;
+  try {
+    route = await getRoute(slug);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      notFound(); // True HTTP 404 per AGENTS.md rule 4.4 & 14.1
+    }
+    throw error;
   }
+
+  const [routes, companySettings] = await Promise.all([
+    getRoutes(),
+    getCompanySettings(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
 
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
@@ -70,9 +88,9 @@ export default async function RouteDetailPage({ params }: Props) {
     path: `/tuyen-lien-tinh/${route.slug}`,
   });
 
-  const relatedRoutes = POPULAR_ROUTES.filter(
-    (r) => r.slug !== route.slug,
-  ).slice(0, 3);
+  const relatedRoutes = route.relatedRoutes.length
+    ? route.relatedRoutes
+    : routes.filter((r) => r.slug !== route.slug).slice(0, 3);
 
   return (
     <>
@@ -129,14 +147,14 @@ export default async function RouteDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* Nút "GỌI NGAY: 0962.298.293" */}
+                {/* Nút "GỌI NGAY: ..." */}
                 <div className="pt-2 flex flex-wrap gap-3">
                   <a
-                    href={COMPANY_INFO.hotlineHref}
+                    href={info.hotlineHref}
                     className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black text-sm sm:text-base shadow-lg shadow-red-600/30 transition-all hover:scale-105"
                   >
                     <PhoneCall className="w-5 h-5 animate-pulse" />
-                    <span>GỌI NGAY: {COMPANY_INFO.hotline}</span>
+                    <span>GỌI NGAY: {info.hotline}</span>
                   </a>
 
                   <a
@@ -302,7 +320,7 @@ export default async function RouteDetailPage({ params }: Props) {
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Tuyến xe ghép <strong>{route.name}</strong> là dịch vụ tiện chuyến
-              chất lượng cao của {COMPANY_INFO.name}, đáp ứng nhu cầu đi lại
+              chất lượng cao của {info.name}, đáp ứng nhu cầu đi lại
               công tác, thăm người thân, khám chữa bệnh và du lịch. Thay vì phải
               di chuyển ra bến xe và chờ đợi xe khách đông đúc, quý khách chỉ
               cần ngồi tại nhà, tài xế sẽ đến tận cửa đón đúng giờ và đưa quý
@@ -375,6 +393,8 @@ export default async function RouteDetailPage({ params }: Props) {
             {/* BookingForm: Điền sẵn Điểm đón / Điểm đến theo tuyến per spec_v2.md 5.2 */}
             <div className="max-w-4xl mx-auto">
               <BookingForm
+                routes={routes}
+                companyInfo={info}
                 initialOrigin={route.origin}
                 initialDestination={route.destination}
                 initialRouteSlug={route.slug}

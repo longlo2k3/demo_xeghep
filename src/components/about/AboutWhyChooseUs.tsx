@@ -1,5 +1,5 @@
 import { Award, ShieldCheck, MapPin, Users, BadgePercent, Clock } from "lucide-react";
-import { SIX_COMMITMENTS } from "@/data/company-info";
+import { SIX_COMMITMENTS, type Commitment } from "@/data/company-info";
 
 const COMMITMENT_ICONS: Record<string, React.ElementType> = {
   ShieldCheck,
@@ -10,7 +10,13 @@ const COMMITMENT_ICONS: Record<string, React.ElementType> = {
   Award,
 };
 
-export function AboutWhyChooseUs() {
+export function AboutWhyChooseUs({
+  commitments = SIX_COMMITMENTS,
+}: {
+  commitments?: Commitment[];
+}) {
+  const items = commitments && commitments.length > 0 ? commitments : SIX_COMMITMENTS;
+
   return (
     <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-10 space-y-6">
       {/* H2 Title with Badge 6 to match other sections */}
@@ -27,7 +33,7 @@ export function AboutWhyChooseUs() {
 
       {/* Grid 6 Cam Kết Dịch Vụ Vàng */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pt-1">
-        {SIX_COMMITMENTS.map((item, idx) => {
+        {items.map((item, idx) => {
           const IconComponent = COMMITMENT_ICONS[item.iconName] || Award;
 
           return (

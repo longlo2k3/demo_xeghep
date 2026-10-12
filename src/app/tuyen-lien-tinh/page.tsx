@@ -3,8 +3,11 @@ import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { RouteListing } from "@/components/routes/RouteListing";
 import { BookingForm } from "@/components/booking/BookingForm";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { Phone, ShieldCheck, Clock, MapPin } from "lucide-react";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = constructMetadata({
   title: "Các Tuyến Xe Ghép Liên Tỉnh - Bảng Giá Mới Nhất 2026",
@@ -13,7 +16,13 @@ export const metadata: Metadata = constructMetadata({
   path: "/tuyen-lien-tinh",
 });
 
-export default function TuyenLienTinhPage() {
+export default async function TuyenLienTinhPage() {
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Các tuyến liên tỉnh", path: "/tuyen-lien-tinh" },
@@ -40,14 +49,14 @@ export default function TuyenLienTinhPage() {
           </div>
 
           {/* Tab filter and RouteCard grid */}
-          <RouteListing />
+          <RouteListing routes={routes} />
 
           {/* Khối ghi chú chung per spec_v2.md 5.1 */}
           <div className="bg-amber-50/80 border border-amber-300 rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto space-y-4">
-            <h3 className="text-base sm:text-lg font-bold text-amber-900 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-amber-900 flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-amber-700" />
               <span>Quy Định & Cam Kết Chung Các Tuyến Liên Tỉnh</span>
-            </h3>
+            </h2>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700">
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0" />
@@ -76,7 +85,11 @@ export default function TuyenLienTinhPage() {
 
           {/* CTA gọi hotline & form đặt xe per spec_v2.md 5.1 */}
           <div className="max-w-4xl mx-auto space-y-8">
-            <BookingForm title="ĐẶT XE LIÊN TỈNH TRỰC TUYẾN" />
+            <BookingForm
+              title="ĐẶT XE LIÊN TỈNH TRỰC TUYẾN"
+              routes={routes}
+              companyInfo={info}
+            />
           </div>
         </div>
       </div>

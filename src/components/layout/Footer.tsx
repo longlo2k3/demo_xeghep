@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, Mail, Globe, Car, ArrowRight } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
+import type { CompanyInfoData } from "@/lib/api";
 
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -10,8 +11,13 @@ function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+export function Footer({
+  companyInfo = COMPANY_INFO,
+}: {
+  companyInfo?: CompanyInfoData;
+}) {
+  const info = companyInfo ?? COMPANY_INFO;
 
-export function Footer() {
   return (
     <footer className="bg-slate-950 text-slate-300 pt-14 pb-28 sm:pb-20 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +33,7 @@ export function Footer() {
                 <span className="text-xl font-black text-white tracking-tight uppercase">
                   XE GHÉP <span className="text-red-500">LIÊN TỈNH</span>
                 </span>
-                <p className="text-xs text-slate-400">{COMPANY_INFO.domainName}</p>
+                <p className="text-xs text-slate-400">{info.domainName}</p>
               </div>
             </div>
 
@@ -45,38 +51,38 @@ export function Footer() {
             <div className="space-y-2.5 text-xs sm:text-sm text-slate-400">
               <div className="flex items-center gap-2.5">
                 <Globe className="w-4 h-4 text-red-500 flex-shrink-0" aria-hidden="true" />
-                <span>Website: <strong>{COMPANY_INFO.domainName}</strong></span>
+                <span>Website: <strong>{info.domainName}</strong></span>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-red-500 flex-shrink-0" aria-hidden="true" />
                 <a
-                  href={COMPANY_INFO.hotlineHref}
+                  href={info.hotlineHref}
                   className="text-amber-400 font-bold hover:underline"
                 >
-                  Hotline: {COMPANY_INFO.hotline}
+                  Hotline: {info.hotline}
                 </a>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-red-500 flex-shrink-0" aria-hidden="true" />
                 <a
-                  href={`mailto:${COMPANY_INFO.email}`}
+                  href={`mailto:${info.email}`}
                   className="hover:text-white transition-colors truncate"
                 >
-                  Email: {COMPANY_INFO.email}
+                  Email: {info.email}
                 </a>
               </div>
 
               <div className="flex items-start gap-2.5">
                 <FacebookIcon className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
                 <a
-                  href={COMPANY_INFO.fanpageUrl}
+                  href={info.fanpageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  Fanpage: {COMPANY_INFO.fanpage}
+                  Fanpage: {info.fanpage}
                 </a>
               </div>
             </div>
@@ -164,7 +170,7 @@ export function Footer() {
 
         {/* Dòng cuối: Bản quyền per spec_v2.md 2.4 */}
         <div className="pt-6 border-t border-slate-900 text-center text-xs text-slate-400">
-          <p>© Bản quyền thuộc về {COMPANY_INFO.name}.</p>
+          <p>© Bản quyền thuộc về {info.name}.</p>
         </div>
       </div>
     </footer>

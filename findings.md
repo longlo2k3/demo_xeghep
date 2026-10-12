@@ -1,69 +1,98 @@
-# Findings & Architecture Research — Xe Ghép Liên Tỉnh (spec_v2.md)
+# Findings — Kết Nối TestSEO Với Backend Payload CMS 3 (/api/v1)
 
-## 1. Project Background & Requirements Analysis (spec_v2.md)
-- **Brand name**: XE GHÉP LIÊN TỈNH
-- **Hotline**: `0962.298.293` (tel: `0962298293`)
-- **Website / Domain**: `xegheplientinh.vn` (Canonical baseUrl: `https://xegheplientinh.vn`)
-- **Email**: `xegheplientinhvip@gmail.com`
-- **Fanpage**: `Xe Ghép Bắc Giang - Bắc Ninh - Hải Phòng`
-- **Slogan / Top Banner**:
-  - Dòng 1: `XE GHÉP: MÓNG CÁI - HẠ LONG - HẢI PHÒNG - BẮC NINH - BẮC GIANG - HÀ NỘI`
-  - Dòng 2: `ĐẶT XE LIÊN HỆ NGAY: 0962.298.293`
-- **Core Value Proposition**:
-  - Đón trả tận nhà, phục vụ 24/7.
-  - Xe chạy thẳng, nhanh, giá rõ ràng. Chỉ ghép 1 - 3 khách/chuyến.
-  - 100% xe riêng đời mới, giảm 10% cho khách hàng cũ.
-  - Hoàn tiền 100%, đền 200% về chất lượng dịch vụ. Miễn phí huỷ chuyến khi đổi lộ trình.
-  - Dịch vụ gửi hàng hoá hỏa tốc giá chỉ từ 150k tất cả các tuyến.
+## A. Trạng Thái Hiện Tại (Khảo sát 2026-10-10)
 
-- **Sitemap Architecture**:
-  - `/` : Trang chủ
-  - `/gioi-thieu` : Giới thiệu
-  - `/tuyen-lien-tinh` : Các tuyến liên tỉnh (trang tổng hợp)
-    - `/tuyen-lien-tinh/hai-phong-bac-ninh-bac-giang`
-    - `/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai`
-    - `/tuyen-lien-tinh/hai-phong-ha-long`
-    - `/tuyen-lien-tinh/hai-phong-mong-cai`
-    - `/tuyen-lien-tinh/ha-long-bac-ninh-bac-giang`
-    - `/tuyen-lien-tinh/ha-noi-mong-cai`
-    - `/tuyen-lien-tinh/ha-noi-ha-long`
-    - `/tuyen-lien-tinh/hai-phong-hai-duong`
-    - `/tuyen-lien-tinh/hai-phong-thai-nguyen`
-  - `/tin-tuc` : Tin tức (danh sách)
-    - `/tin-tuc/[slug]` : Chi tiết bài viết
-  - `/lien-he` : Liên hệ
-  - `/chinh-sach/thanh-toan` : Chính sách thanh toán
-  - `/chinh-sach/dam-bao` : Chính sách đảm bảo
-  - `/chinh-sach/bao-mat` : Chính sách bảo mật
+1. **Backend Payload CMS 3 (:3001)**:
+   - Container Postgres `cms-db` đang hoạt động (Up 11 hours, healthy).
+   - Port 3001 đang lắng nghe, các endpoint chính đã được verify trực tiếp:
+     - `GET /api/v1/routes`: Trả về 9 tuyến đầy đủ tier giá, thumbnail URL, regions.
+     - `GET /api/v1/settings/company`: Trả về thông tin hotline `0962.298.293`, 6 cam kết, 2 phương thức thanh toán, 4 đánh giá.
+     - `GET /api/v1/seo/sitemap`: Trả về 20 canonical URLs đã lọc sạch trang nội bộ và trang redirect.
+     - `GET /api/v1/pricing/airport` & `GET /api/v1/pricing/distance`: Hoạt động chuẩn xác.
+     - `POST /api/v1/pricing/estimate`: Trả về báo giá tức thì.
+     - `POST /api/v1/bookings` & `GET /api/v1/bookings/:code`: Tạo đơn và tra cứu đơn kèm token HMAC.
 
-- **9 Tuyến xe ghép & Giá niêm yết (spec_v2.md Section 4)**:
-  1. Hải Phòng ⇄ Bắc Ninh ⇄ Bắc Giang: Ghép 1 người: 400k – 500k · Ghép 2 người: từ 700k · Bao xe 5 chỗ: từ 900k · Bao xe 7 chỗ: từ 1.000k.
-  2. Hải Phòng ⇄ Hà Nội ⇄ Nội Bài: Ghép 1 người: 400k · Ghép 2 người: 700k · Bao xe 5 chỗ: từ 899k · Bao xe 7 chỗ: từ 999k.
-  3. Hải Phòng ⇄ Hạ Long: Bao xe 4 chỗ: 400k – 500k · Bao xe 7 chỗ: 500k – 600k · Ghép 1 khách: 250k – 300k.
-  4. Hải Phòng ⇄ Móng Cái: Bao xe 4 chỗ: 1.500k – 1.600k · Bao xe 7 chỗ: 1.600k – 1.700k · Ghép 1 khách: 500k – 600k.
-  5. Hạ Long ⇄ Bắc Ninh ⇄ Bắc Giang: Ghép 1 người: 450k – 550k · Ghép 2 người: từ 700k · Bao xe 5 chỗ: từ 900k · Bao xe 7 chỗ: từ 1.000k.
-  6. Hà Nội ⇄ Móng Cái: Bao xe 4 chỗ: 2.200k – 2.400k · Bao xe 7 chỗ: 2.300k – 2.500k · Ghép 1 khách: 600k – 800k.
-  7. Hà Nội ⇄ Hạ Long: Bao xe 4 chỗ: 1.100k – 1.200k · Bao xe 7 chỗ: 1.200k – 1.300k · Ghép 1 khách: 450k – 550k.
-  8. Hải Phòng ⇄ Hải Dương: Ghép 1 khách: 250k · Ghép 2 khách: 400k · Bao xe riêng: 500k.
-  9. Hải Phòng ⇄ Thái Nguyên: Ghép 1 người: 600k · Ghép 2 người: 900k · Bao xe riêng: 1.400k.
+2. **Frontend TestSEO (`feat/cms-api`)**:
+   - `src/lib/api.ts` (757 dòng): Đã cài đặt đầy đủ client envelope typed cho toàn bộ 15 API backend.
+   - `src/lib/booking.ts`: Đã có validate số điện thoại Việt Nam, convert ngày giờ sang ISO +07:00, honeypot `website`, và UUID `Idempotency-Key`.
+   - `src/lib/redirects.ts` & `src/middleware.ts`: Đã có cache in-memory 60s và cơ chế fail-open khi CMS offline.
+   - `src/lib/revalidate.ts` & `src/app/api/webhooks/revalidate`: Đã sẵn sàng nhận webhook `x-revalidate-secret`.
+   - `@/data/routes.ts`: Đã được gỡ bỏ; các trang chủ, `/tuyen-lien-tinh`, `layout.tsx`, `gioi-thieu`, `lien-he` đã nhận `routes` từ `getRoutes()`.
 
-## 2. SEO Rules Checklist (AGENTS.md Compliance Matrix)
-| Rule | Mức | Kế hoạch triển khai trong Next.js |
-|---|---|---|
-| Title & Description unique | 🔴 MUST / 🟠 SHOULD | Dùng Next.js `Metadata` & `generateMetadata` cho từng trang. Format: `{Ý chính} - {Ý phụ} \| Xe Ghép Hải Phòng` |
-| Canonical URL | 🔴 MUST | Absolute URL `https://xehaiphong.vn/...`. Khai báo theo từng page qua `alternates: { canonical: ... }`. **CẤM** khai báo canonical ở `app/layout.tsx`! |
-| Charset & Viewport | 🔴 MUST | Khai báo UTF-8 đầu tiên, viewport `width=device-width, initial-scale=1`, cho phép zoom |
-| Async params (Next.js 15+) | 🔴 MUST | Mọi `params` và `searchParams` đều được `await` đúng chuẩn |
-| Semantic HTML | 🟠 SHOULD | Đúng 1 `<main>` mỗi trang, `<header>`, `<footer>`, `<nav aria-label="...">`, đúng 1 `h1`, tuần tự `h1` → `h2` → `h3` |
-| Image optimization | 🔴 MUST | `next/image` với `width`, `height`, `alt` có nghĩa, `priority` cho hero LCP, `loading="lazy"` cho ảnh dưới fold |
-| Structured Data (JSON-LD) | 🔴 MUST / 🟠 SHOULD | `@graph` schema: Organization, LocalBusiness / TaxiService, BreadcrumbList, Service / Offer, Article. Dữ liệu thật 100% khớp `xehaiphong.md` |
-| Navigation | 🔴 MUST | `<Link href="...">` chuẩn, không dùng `onClick` + `router.push` thay link |
-| 404 thật | 🔴 MUST | Trang không tồn tại gọi `notFound()` trong `not-found.tsx` |
-| Robots & Sitemap | 🟠 SHOULD | `app/robots.ts` và `app/sitemap.ts` sinh tự động từ danh sách URL chuẩn của `xehaiphong.vn` |
-| Font & CWV | 🟠 SHOULD | `next/font/google` (Be Vietnam Pro) với subset `['latin', 'vietnamese']` và `display: 'swap'` |
+## B. Những Điểm Cần Xử Lý Để Hoàn Thiện (Gaps)
 
-## 3. Tech Stack & Dependencies
-- **Framework**: Next.js (App Router, TypeScript, React 19 / React Server Components).
-- **Styling**: Tailwind CSS (Mobile-first, Ocean Blue & Emerald theme: `#0284c7`, `#0369a1`, `#008542`, `#0f172a`).
-- **Icons**: Lucide React.
-- **Testing**: Vitest (Schema generator, canonical validator, pricing calculations).
+1. **`src/components/booking/BookingForm.tsx`**:
+   - Dòng 401 & dòng 826 tham chiếu `estimatedPrice.price` và `estimatedPrice.unit` (biến cũ chưa khai báo sau khi refactor) gây lỗi TS2304 khi chạy `tsc --noEmit`.
+   - Cần thay bằng `priceDisplay` và `unitDisplay` (đã có sẵn từ kết quả gọi `postEstimate`).
+
+2. **`src/app/dat-xe/thanh-cong/page.tsx`**:
+   - Hiện vẫn chỉ đọc query string cơ bản hoặc dùng mockup data `HP886699`.
+   - Cần dùng `lookupBooking(code, { token: t })` để lấy thông tin thực tế của đơn hàng từ backend nếu có param, fallback nếu không có, giữ `noindex: true`.
+
+3. **`src/app/tin-tuc/page.tsx` & `src/app/tin-tuc/[slug]/page.tsx`**:
+   - Vẫn import trực tiếp từ `@/data/articles`.
+   - Cần chuyển sang `getArticles()` và `getArticle(slug)` từ `src/lib/api.ts`.
+
+4. **`src/app/sitemap.ts`**:
+   - Vẫn map thủ công `ARTICLES`.
+   - Cần chuyển sang gọi `getSitemapEntries()` từ `src/lib/api.ts` để đồng bộ trực tiếp từ CMS.
+
+5. **`next.config.ts`**:
+   - `remotePatterns` hiện chỉ có `images.unsplash.com`. Cần bổ sung `localhost` port 3001 và domain CMS để Next/Image nạp ảnh từ CMS `/media/*`.
+
+## C. Kết Quả Audit SEO Theo AGENTS.md (2026-10-11)
+
+1. **Robots.txt vs Noindex Conflict (Rule 1.5 & Rule 14.1)**:
+   - Phát hiện: `robots.ts` có `disallow: ["/dat-xe/thanh-cong"]` trong khi trang này đã có `noindex: true`. Rule 1.5 cấm vừa disallow vừa noindex.
+   - Khắc phục: Gỡ bỏ `/dat-xe/thanh-cong` khỏi `disallow`, thêm rule chặn toàn bộ `disallow: /` trên môi trường non-production/staging để ngăn rò rỉ index.
+
+2. **Structured Data Breadcrumbs @context (Rule 7.1)**:
+   - Phát hiện: `buildBreadcrumbSchema` thiếu `@context: "https://schema.org"`.
+   - Khắc phục: Đã bổ sung `@context` hợp lệ chuẩn W3C / Google Rich Results.
+
+3. **Heading Hierarchy (Rule 3.2)**:
+   - Phát hiện: Trang chủ có `<h2>` ở `PriceBannerSection` nằm trên `<h1>` ở `HeroSection`. Trang `/tuyen-lien-tinh` nhảy từ `<h1>` xuống `<h3>`. Trang `/tin-tuc` thiếu `<h2>` bao quanh lưới bài viết khác.
+   - Khắc phục: Đồng bộ thứ tự chuẩn H1 -> H2 -> H3 không nhảy cấp.
+
+4. **Security & Performance Headers (Rule 13.2 & Rule 6.5)**:
+   - Đã bổ sung `Strict-Transport-Security: max-age=31536000; includeSubDomains` và `X-Frame-Options: SAMEORIGIN` vào `next.config.ts`.
+
+5. **Favicon & Scalable SVG Assets (Rule 1.7)**:
+   - Tạo `public/icon.svg` độ phân giải cao 512x512, cập nhật `layout.tsx` icons khai báo đầy đủ favicon và apple-touch-icon.
+
+6. **Sitemap Dynamic Fallback (Rule 9.2)**:
+   - Bổ sung `getRoutes({ fields: "slug" })` vào danh sách fallback trong `sitemap.ts` để luôn có đầy đủ 20 URL ngay cả khi API CMS gián đoạn.
+
+## D. Kết Nối Toàn Diện API Company Settings (2026-10-11)
+
+1. **API Client & Graceful Fallback (`src/lib/api.ts`)**:
+   - `getCompanySettings()` đã được bổ sung `try/catch` với `FALLBACK_COMPANY_SETTINGS` fail-open an toàn, đảm bảo nếu CMS gặp sự cố thì hệ thống không bao giờ bị sập (500).
+   - Xuất khẩu helper `getCompanyInfo()` trả về `CompanyInfoData` cho các component chỉ cần thông tin thương hiệu/liên hệ.
+
+2. **Cập nhật Schema & Layout (`src/lib/schema.ts`, `src/app/layout.tsx`)**:
+   - `buildGlobalBusinessSchema(settings?: CompanySettingsData)` nhận động dữ liệu từ CMS (hotline, address, geocodes, working hours) và fallback an toàn về `COMPANY_INFO`.
+   - `layout.tsx` gọi song song `Promise.all([getCompanySettings(), getRoutes()])` và phân phối `companyInfo` xuống `Header`, `Footer`, `FloatingContact`, và Schema markup.
+
+3. **Tất Cả Các Trang & Component Đã Nhận Dynamic Company Settings**:
+   - `Header`, `TopBanner`, `Footer`, `FloatingContact`, `BookingForm`, `HeroSection`, `AboutWhyChooseUs`.
+   - Các trang: Trang chủ (`/`), Giới thiệu (`/gioi-thieu`), Liên hệ (`/lien-he`), Đặt xe (`/dat-xe`), Đặt xe thành công (`/dat-xe/thanh-cong`), Tuyến liên tỉnh (`/tuyen-lien-tinh` & `[slug]`), Tin tức (`/tin-tuc` & `[slug]`), Chính sách (`thanh-toan`, `bao-mat`, `dam-bao`), và 404 (`not-found.tsx`).
+   - Kiểm tra `npm test` (17/17 pass), `npx tsc --noEmit` (0 lỗi), `npm run build` (26/26 trang tĩnh biên dịch thành công, exit code 0).
+
+
+
+## E. Tối Ưu Tốc Độ Tải Trang & Bảo Vệ Timeout (2026-10-12)
+
+1. **Khắc Phục Điểm Nghẽn Middleware (src/middleware.ts)**:
+   - Thêm MIDDLEWARE_TIMEOUT_MS = 500.
+   - Dùng Promise.race([loadRedirects(), timeoutPromise]) đảm bảo middleware không bao giờ chặn request quá 500ms khi CMS phản hồi chậm hoặc đang khởi động.
+
+2. **Timeout Bảo Vệ Trong API Client (src/lib/api.ts)**:
+   - Thêm DEFAULT_GET_TIMEOUT_MS = 2500 và DEFAULT_POST_TIMEOUT_MS = 8000.
+   - Áp dụng AbortSignal.timeout trên mọi request gọi sang CMS. Bắt lỗi TimeoutError và map sang CMS_TIMEOUT.
+   - Bổ sung 	ry/catch cho getRoutes() và getRoute(slug) với cơ chế fallback tự động về FALLBACK_ROUTES và allbackRouteDetail(slug), ngăn chặn hoàn toàn việc build hoặc SSR bị treo 60s.
+
+3. **Bộ Dữ Liệu Fallback Tuyến Đường Chuẩn (src/data/fallback-routes.ts)**:
+   - Tách 9 tuyến xe ghép phổ biến thành dataset dùng chung cho cả runtime fail-open và unit test fixtures.
+   - Kiểm tra 
+pm test (17/17 pass trong 0.95s), 
+px tsc --noEmit (0 lỗi).

@@ -5,7 +5,8 @@ import Image from "next/image";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES as FALLBACK_ARTICLES, type Article } from "@/data/articles";
+import { getArticle, getArticles, getCompanySettings, isNotFoundError, type ArticleDetail } from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { buildArticleSchema } from "@/lib/schema";
 import {
@@ -18,19 +19,39 @@ import {
   Car,
 } from "lucide-react";
 
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  return ARTICLES.map((article) => ({
+  try {
+    const res = await getArticles();
+    if (res.items && res.items.length > 0) {
+      return res.items.map((article) => ({ slug: article.slug }));
+    }
+  } catch {
+    // CMS offline fallback
+  }
+  return FALLBACK_ARTICLES.map((article) => ({
     slug: article.slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = ARTICLES.find((a) => a.slug === slug);
+  let article: ArticleDetail | (typeof FALLBACK_ARTICLES)[number] | undefined;
+
+  try {
+    article = await getArticle(slug);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      article = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+    } else {
+      article = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+    }
+  }
 
   if (!article) return {};
 
@@ -48,11 +69,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticleDetailPage({ params }: Props) {
   const { slug } = await params;
-  const article = ARTICLES.find((a) => a.slug === slug);
+  let article: ArticleDetail | (typeof FALLBACK_ARTICLES)[number] | undefined;
+
+  try {
+    article = await getArticle(slug);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      article = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+      if (!article) notFound();
+    } else {
+      article = FALLBACK_ARTICLES.find((a) => a.slug === slug);
+      if (!article) notFound();
+    }
+  }
 
   if (!article) {
     notFound();
   }
+
+  const companySettings = await getCompanySettings();
+  const info = companySettings.info ?? COMPANY_INFO;
 
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
@@ -70,10 +106,21 @@ export default async function ArticleDetailPage({ params }: Props) {
     imageUrl: article.image,
   });
 
-  const otherArticles = ARTICLES.filter((a) => a.slug !== article.slug).slice(
-    0,
-    3,
-  );
+  let otherArticles: Article[] = [];
+  try {
+    const listRes = await getArticles({ limit: 4, excludeSlug: article.slug });
+    if (listRes.items && listRes.items.length > 0) {
+      otherArticles = listRes.items.slice(0, 3);
+    }
+  } catch {
+    // CMS offline fallback
+  }
+
+  if (otherArticles.length === 0) {
+    otherArticles = (FALLBACK_ARTICLES as Article[])
+      .filter((a) => a.slug !== article.slug)
+      .slice(0, 3);
+  }
 
   return (
     <>
@@ -144,11 +191,11 @@ export default async function ArticleDetailPage({ params }: Props) {
                 </div>
               </div>
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex-shrink-0"
               >
                 <PhoneCall className="w-3.5 h-3.5 animate-pulse" />
-                <span>Gọi: {COMPANY_INFO.hotline}</span>
+                <span>Gọi: {info.hotline}</span>
               </a>
             </div>
 
@@ -201,11 +248,11 @@ export default async function ArticleDetailPage({ params }: Props) {
                 </Link>
 
                 <a
-                  href={COMPANY_INFO.hotlineHref}
+                  href={info.hotlineHref}
                   className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm flex items-center gap-1.5"
                 >
                   <PhoneCall className="w-4 h-4 text-amber-300 animate-pulse" />
-                  <span>Gọi {COMPANY_INFO.hotline}</span>
+                  <span>Gọi {info.hotline}</span>
                 </a>
               </div>
             </div>

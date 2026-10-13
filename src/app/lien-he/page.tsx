@@ -3,8 +3,9 @@ import Image from "next/image";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { BookingForm } from "@/components/booking/BookingForm";
 import { COMPANY_INFO } from "@/data/company-info";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 import { constructMetadata } from "@/lib/seo";
-import { Phone, Clock, MessageSquare, Mail, Globe } from "lucide-react";
+import { Phone, Clock, MessageSquare, Mail, Globe, MapPin } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
   title: "Liên Hệ Đặt Xe Ghép - Phục Vụ 24/7 Toàn Tuyến Liên Tỉnh",
@@ -21,7 +22,17 @@ function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
+  const address = companySettings.address;
+  const mapEmbedUrl =
+    companySettings.mapEmbedUrl ||
+    "https://maps.google.com/maps?q=Le+Chan,+Hai+Phong,+Vietnam&t=&z=14&ie=UTF8&iwloc=&output=embed";
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Liên hệ", path: "/lien-he" },
@@ -73,6 +84,22 @@ export default function ContactPage() {
                   </h2>
 
                   <div className="space-y-3.5 text-sm text-slate-900">
+                    {address && (
+                      <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
+                        <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
+                          <MapPin className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <strong className="block text-slate-900 font-bold mb-0.5">
+                            Địa Chỉ Văn Phòng:
+                          </strong>
+                          <p className="text-xs sm:text-sm text-slate-800 font-medium">
+                            {address}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex items-start gap-3.5 bg-white/80 backdrop-blur-sm p-3.5 rounded-2xl border border-white/70 shadow-2xs">
                       <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 shadow-xs">
                         <Phone className="w-5 h-5 animate-pulse" />
@@ -82,10 +109,10 @@ export default function ContactPage() {
                           Hotline Tổng Đài 24/7:
                         </strong>
                         <a
-                          href={COMPANY_INFO.hotlineHref}
+                          href={info.hotlineHref}
                           className="text-lg font-black text-red-600 hover:underline block"
                         >
-                          {COMPANY_INFO.hotline}
+                          {info.hotline}
                         </a>
                         <span className="text-xs text-slate-600 font-medium">
                           Phục vụ 24/7 liên tục cả ngày và đêm
@@ -102,10 +129,10 @@ export default function ContactPage() {
                           Email Hỗ Trợ:
                         </strong>
                         <a
-                          href={`mailto:${COMPANY_INFO.email}`}
+                          href={`mailto:${info.email}`}
                           className="text-xs sm:text-sm text-slate-800 hover:underline font-semibold"
                         >
-                          {COMPANY_INFO.email}
+                          {info.email}
                         </a>
                       </div>
                     </div>
@@ -119,12 +146,12 @@ export default function ContactPage() {
                           Fanpage Facebook:
                         </strong>
                         <a
-                          href={COMPANY_INFO.fanpageUrl}
+                          href={info.fanpageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs sm:text-sm text-blue-700 hover:underline font-bold"
                         >
-                          {COMPANY_INFO.fanpage}
+                          {info.fanpage}
                         </a>
                       </div>
                     </div>
@@ -138,7 +165,7 @@ export default function ContactPage() {
                           Website Chính Thức:
                         </strong>
                         <p className="text-xs sm:text-sm text-slate-800 font-semibold">
-                          {COMPANY_INFO.domainName}
+                          {info.domainName}
                         </p>
                       </div>
                     </div>
@@ -152,7 +179,7 @@ export default function ContactPage() {
                           Thời Gian Làm Việc:
                         </strong>
                         <p className="text-xs sm:text-sm text-slate-800 font-medium">
-                          {COMPANY_INFO.workingHours}
+                          {info.workingHours}
                         </p>
                       </div>
                     </div>
@@ -161,7 +188,7 @@ export default function ContactPage() {
                   {/* Kênh gọi nhanh / Zalo */}
                   <div className="pt-2 flex gap-3">
                     <a
-                      href={COMPANY_INFO.zaloHref}
+                      href={info.zaloHref}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
@@ -170,7 +197,7 @@ export default function ContactPage() {
                       <span>Nhắn Tin Zalo</span>
                     </a>
                     <a
-                      href={COMPANY_INFO.hotlineHref}
+                      href={info.hotlineHref}
                       className="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
                     >
                       <Phone className="w-4 h-4" />
@@ -183,19 +210,23 @@ export default function ContactPage() {
 
             {/* Cột Phải: Form Đặt Xe Trực Tuyến Tại Đây (thay thế Card Gửi Phản Hồi) */}
             <div className="lg:col-span-7">
-              <BookingForm title="ĐẶT XE TRỰC TUYẾN TẠI ĐÂY" />
+              <BookingForm
+                title="ĐẶT XE TRỰC TUYẾN TẠI ĐÂY"
+                routes={routes}
+                companyInfo={info}
+              />
             </div>
           </div>
 
-          {/* Bản đồ vị trí Lê Chân, Hải Phòng (Google Maps Embed) */}
+          {/* Bản đồ vị trí (Google Maps Embed) */}
           <section
-            aria-label="Bản đồ vị trí Lê Chân, Hải Phòng"
+            aria-label="Bản đồ vị trí văn phòng"
             className="w-full rounded-3xl overflow-hidden border border-slate-200/90 shadow-md bg-white"
           >
             <div className="relative w-full h-[380px] sm:h-[480px]">
               <iframe
-                title="Bản đồ vị trí Lê Chân, Hải Phòng"
-                src="https://maps.google.com/maps?q=Le+Chan,+Hai+Phong,+Vietnam&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                title="Bản đồ vị trí văn phòng"
+                src={mapEmbedUrl}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

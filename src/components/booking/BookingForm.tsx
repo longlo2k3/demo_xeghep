@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState, useId, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   MapPin,
   ArrowLeftRight,
@@ -16,9 +17,18 @@ import {
   Navigation,
 } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
-import { POPULAR_ROUTES, type RouteItem } from "@/data/routes";
+import { type RouteItem } from "@/lib/types";
+import { isApiError, postBooking, postEstimate, type EstimateResult, type CompanyInfoData } from "@/lib/api";
+import {
+  buildBookingPayload,
+  buildEstimateInput,
+  createIdempotencyKey,
+  isValidVietnamPhone,
+} from "@/lib/booking";
 
 interface BookingFormProps {
+  routes: RouteItem[];
+  companyInfo?: CompanyInfoData;
   initialOrigin?: string;
   initialDestination?: string;
   initialRouteSlug?: string;
@@ -39,20 +49,15 @@ const COMMON_LOCATIONS = [
   "Thái Nguyên (TP. Thái Nguyên, KCN Samsung)",
 ];
 
-// Helper chuẩn hóa hiển thị giá (ví dụ: "400k" -> "400.000đ", "từ 899k" -> "từ 899.000đ")
-function formatPriceText(raw?: string): string {
-  if (!raw) return "";
-  return raw.replace(/(\d+(?:\.\d+)?)k/gi, (_, num) => `${num}.000đ`);
-}
-
 // Helper tìm tuyến khớp với điểm đón và điểm đến (hỗ trợ cả 2 chiều)
 function findMatchingRoute(
+  routes: RouteItem[],
   pickupStr: string,
   dropoffStr: string,
   explicitSlug?: string,
 ): RouteItem | undefined {
   if (explicitSlug && explicitSlug !== "custom") {
-    const bySlug = POPULAR_ROUTES.find((r) => r.slug === explicitSlug);
+    const bySlug = routes.find((r) => r.slug === explicitSlug);
     if (bySlug) return bySlug;
   }
 
@@ -69,7 +74,7 @@ function findMatchingRoute(
   const p = normalize(pickupStr);
   const d = normalize(dropoffStr);
 
-  return POPULAR_ROUTES.find((r) => {
+  return routes.find((r) => {
     const o = normalize(r.origin);
     const dest = normalize(r.destination);
 
@@ -99,94 +104,26 @@ function findMatchingRoute(
   });
 }
 
-interface PriceEstimateResult {
-  price: string;
-  unit: string;
-  badge?: string;
-  note: string;
-}
-
-// Helper tính toán giá cước dựa trên thông số đặt xe
-function calculatePriceEstimate({
-  route,
-  rideType,
-  vehicleType,
-  passengerCount,
-}: {
-  route?: RouteItem;
-  rideType: "ghep" | "bao";
-  vehicleType: string;
-  passengerCount: number;
-}): PriceEstimateResult {
-  if (vehicleType === "guihang") {
-    return {
-      price: "Từ 150.000đ",
-      unit: "/ kiện hàng",
-      badge: "Hỏa tốc trong ngày",
-      note: "Giao nhận tận tay 2 đầu, phát hàng nhanh trong 2–4 giờ.",
-    };
+function submitErrorMessage(error: unknown): string {
+  if (!isApiError(error)) {
+    return "Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại.";
   }
-
-  if (!route) {
-    return {
-      price: "Chỉ từ 8.000đ – 11.000đ",
-      unit: "/ km",
-      badge: "Tính theo km thực tế",
-      note: "Tổng đài sẽ gọi báo giá trọn gói ưu đãi nhất theo đúng lộ trình của bạn.",
-    };
+  if (error.status === 422) {
+    const messages = error.fields
+      .filter((field) => field.field !== "customerPhone")
+      .map((field) => field.message);
+    if (messages.length > 0) return messages.join(" ");
+    return error.message || "Dữ liệu đặt xe chưa hợp lệ. Vui lòng kiểm tra lại.";
   }
-
-  if (rideType === "ghep") {
-    if (passengerCount === 2 && route.priceShare2Text) {
-      return {
-        price: formatPriceText(route.priceShare2Text),
-        unit: "/ 2 khách",
-        badge: "Ưu đãi đi 2 người",
-        note: `Đón trả tận nhà 2 chiều • Ghép tối đa 1–3 người trên xe, không nhồi nhét.`,
-      };
-    }
-
-    if (passengerCount >= 3) {
-      return {
-        price: route.priceCharter4to5Text
-          ? formatPriceText(route.priceCharter4to5Text)
-          : "Liên hệ ưu đãi",
-        unit: "/ 3 khách (Khuyên bao xe)",
-        badge: "Tiết kiệm nhất khi bao xe",
-        note: `Từ 3 khách trở lên, bao trọn gói xe riêng để chủ động thời gian và tối ưu chi phí!`,
-      };
-    }
-
-    return {
-      price: formatPriceText(route.priceShare1Text),
-      unit: "/ khách",
-      badge: "Ghép 1–3 khách/xe",
-      note: `Đón trả tận nhà • Chạy cao tốc êm ái, cam kết không bắt khách dọc đường.`,
-    };
+  if (error.status === 429) {
+    return "Bạn thao tác quá nhanh. Vui lòng đợi ít phút rồi thử lại hoặc gọi tổng đài.";
   }
-
-  // rideType === "bao"
-  if (vehicleType === "7cho") {
-    const raw7 = route.priceCharter7Text || "từ 1.000k";
-    return {
-      price: formatPriceText(raw7),
-      unit: "/ trọn chuyến (Xe 7 chỗ)",
-      badge: "Bao xe 7 chỗ riêng",
-      note: `Đã gồm trọn gói vé cầu đường & cao tốc. Không phát sinh bất kỳ phụ phí nào.`,
-    };
-  }
-
-  // 4cho hoặc 5cho
-  const raw45 = route.priceCharter4to5Text || "từ 900k";
-  return {
-    price: formatPriceText(raw45),
-    unit: `/ trọn chuyến (${vehicleType === "5cho" ? "Xe 5 chỗ" : "Xe 4 chỗ"})`,
-    badge: "Bao xe riêng đời mới",
-    note: `Đã gồm trọn gói vé cầu đường & cao tốc. Đưa đón tận nhà, linh hoạt giờ xuất phát.`,
-  };
+  return error.message || "Đặt xe thất bại. Vui lòng thử lại hoặc gọi tổng đài.";
 }
 
 export function BookingForm({
+  routes,
+  companyInfo = COMPANY_INFO,
   initialOrigin = "",
   initialDestination = "",
   initialRouteSlug = "",
@@ -194,6 +131,7 @@ export function BookingForm({
   compact = false,
   variant,
 }: BookingFormProps) {
+  const info = companyInfo ?? COMPANY_INFO;
   const isGlass = variant ? variant === "glass" : compact;
   const baseId = useId();
   const routeSelectId = `${baseId}-route-select`;
@@ -208,10 +146,9 @@ export function BookingForm({
 
   // Khởi tạo tuyến mặc định
   const defaultRoute =
-    (initialRouteSlug &&
-      POPULAR_ROUTES.find((r) => r.slug === initialRouteSlug)) ||
-    findMatchingRoute(initialOrigin, initialDestination) ||
-    POPULAR_ROUTES[1]; // Tuyến Hải Phòng - Hà Nội - Nội Bài làm mặc định tiêu biểu
+    (initialRouteSlug && routes.find((r) => r.slug === initialRouteSlug)) ||
+    findMatchingRoute(routes, initialOrigin, initialDestination) ||
+    routes[1]; // Tuyến Hải Phòng - Hà Nội - Nội Bài làm mặc định tiêu biểu
 
   const [selectedRouteSlug, setSelectedRouteSlug] = useState<string>(
     initialRouteSlug ||
@@ -235,21 +172,63 @@ export function BookingForm({
   const [pickupDateTime, setPickupDateTime] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [phoneError, setPhoneError] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot theo hợp đồng backend
+  const [estimate, setEstimate] = useState<EstimateResult | null>(null);
+  const [estimating, setEstimating] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const estimateSeq = useRef(0);
+  const idempotencyRef = useRef<{ key: string; signature: string } | null>(null);
+  const router = useRouter();
 
   // Xác định tuyến xe đang chọn hoặc khớp từ điểm đón/trả
   const activeRoute =
     selectedRouteSlug !== "custom"
-      ? POPULAR_ROUTES.find((r) => r.slug === selectedRouteSlug) ||
-        findMatchingRoute(pickup, dropoff)
-      : findMatchingRoute(pickup, dropoff);
+      ? routes.find((r) => r.slug === selectedRouteSlug) ||
+        findMatchingRoute(routes, pickup, dropoff)
+      : findMatchingRoute(routes, pickup, dropoff);
 
-  // Tính toán giá cước thời gian thực
-  const estimatedPrice = calculatePriceEstimate({
-    route: activeRoute,
-    rideType,
-    vehicleType,
-    passengerCount,
-  });
+  // Báo giá từ API: debounce 300ms, giữ giá cũ nếu API lỗi
+  useEffect(() => {
+    const input = buildEstimateInput({
+      pickup,
+      dropoff,
+      routeSlug: activeRoute?.slug ?? null,
+      vehicleType,
+      rideType,
+      passengerCount,
+    });
+    if (!input) {
+      setEstimating(false);
+      return;
+    }
+
+    const seq = ++estimateSeq.current;
+    setEstimating(true);
+    const timer = setTimeout(() => {
+      postEstimate(input)
+        .then((result) => {
+          if (seq === estimateSeq.current) setEstimate(result);
+        })
+        .catch(() => {
+          // CMS chậm hoặc mất kết nối: giữ giá hiện tại, form vẫn dùng được.
+        })
+        .finally(() => {
+          if (seq === estimateSeq.current) setEstimating(false);
+        });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [pickup, dropoff, vehicleType, rideType, passengerCount, activeRoute?.slug]);
+
+  const priceDisplay = estimate ? estimate.displayPrice : estimating ? "…" : "";
+  const unitDisplay = estimate?.unit ?? "";
+  const needsQuote =
+    !!estimate &&
+    (estimate.priceType === "quote_required" ||
+      estimate.priceType === "negotiable" ||
+      estimate.pricingMode === "quote_required");
+  const quoteNote = needsQuote ? estimate?.note ?? "" : "";
 
   // Get current date string for min datetime-local
   const now = new Date();
@@ -261,7 +240,7 @@ export function BookingForm({
     if (slug === "custom") {
       return;
     }
-    const found = POPULAR_ROUTES.find((r) => r.slug === slug);
+    const found = routes.find((r) => r.slug === slug);
     if (found) {
       setPickup(found.origin);
       setDropoff(found.destination);
@@ -274,20 +253,59 @@ export function BookingForm({
     setDropoff(temp);
   };
 
-  const validatePhone = (val: string) => {
-    const regex = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
-    return regex.test(val.replace(/\s+/g, ""));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
 
-    if (!validatePhone(phone)) {
+    if (!isValidVietnamPhone(phone)) {
       setPhoneError("Vui lòng nhập số điện thoại Việt Nam hợp lệ (10 số)");
       return;
     }
     setPhoneError("");
-    setSubmitted(true);
+
+    if (!pickupDateTime) {
+      setFormError("Vui lòng chọn ngày và giờ đón.");
+      return;
+    }
+    setFormError("");
+
+    const payload = buildBookingPayload({
+      customerName: fullName,
+      customerPhone: phone,
+      pickup,
+      dropoff,
+      routeSlug: activeRoute?.slug ?? null,
+      vehicleType,
+      rideType,
+      passengerCount,
+      pickupDateTime,
+      website,
+    });
+
+    // Idempotency-Key: 1 key cho mỗi nội dung đơn, dùng lại khi retry.
+    const signature = JSON.stringify(payload);
+    if (!idempotencyRef.current || idempotencyRef.current.signature !== signature) {
+      idempotencyRef.current = { key: createIdempotencyKey(), signature };
+    }
+
+    setSubmitting(true);
+    try {
+      const result = await postBooking(payload, idempotencyRef.current.key);
+      setSubmitted(true);
+      const query = new URLSearchParams({
+        code: result.bookingCode,
+        t: result.lookupToken,
+      });
+      router.push(`/dat-xe/thanh-cong?${query.toString()}`);
+    } catch (error) {
+      setFormError(submitErrorMessage(error));
+      if (isApiError(error)) {
+        const phoneField = error.fields.find((field) => field.field === "customerPhone");
+        if (phoneField) setPhoneError(phoneField.message);
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -383,17 +401,17 @@ export function BookingForm({
               >
                 <span className="font-bold">Giá cước niêm yết:</span>
                 <span className="font-black text-amber-400 text-base sm:text-lg">
-                  {estimatedPrice.price} {estimatedPrice.unit}
+                  {priceDisplay} {unitDisplay}
                 </span>
               </div>
             </div>
             <div className="pt-2">
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow-md"
               >
                 <Phone className="w-4 h-4 animate-pulse" />
-                <span>Hoặc gọi trực tiếp: {COMPANY_INFO.hotline}</span>
+                <span>Hoặc gọi trực tiếp: {info.hotline}</span>
               </a>
             </div>
           </div>
@@ -434,7 +452,7 @@ export function BookingForm({
                     : "bg-white border-slate-300 text-slate-900"
                 } ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
               >
-                {POPULAR_ROUTES.map((r) => (
+                {routes.map((r) => (
                   <option
                     key={r.slug}
                     value={r.slug}
@@ -799,17 +817,24 @@ export function BookingForm({
             <div className="pt-1 sm:pt-2">
               <button
                 type="submit"
-                className={`w-full rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 text-white font-black uppercase tracking-wider shadow-lg shadow-red-600/40 hover:shadow-xl transition-all hover:scale-[1.01] cursor-pointer border border-red-400/30 flex items-center justify-center gap-2 ${
+                disabled={submitting}
+                className={`w-full rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-800 text-white font-black uppercase tracking-wider shadow-lg shadow-red-600/40 hover:shadow-xl transition-all hover:scale-[1.01] border border-red-400/30 flex items-center justify-center gap-2 ${
+                  submitting ? "opacity-80 cursor-not-allowed" : "cursor-pointer"
+                } ${
                   compact
                     ? "py-3 px-4 text-xs sm:text-sm"
                     : "py-4 px-6 text-sm sm:text-base"
                 }`}
               >
-                <span>ĐẶT XE NGAY</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
-                <span className="text-amber-300 font-extrabold normal-case">
-                  {estimatedPrice.price}
-                </span>
+                <span>{submitting ? "Đang gửi đơn..." : "ĐẶT XE NGAY"}</span>
+                {priceDisplay && (
+                  <>
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                    <span className="text-amber-300 font-extrabold normal-case">
+                      {priceDisplay}
+                    </span>
+                  </>
+                )}
               </button>
               <p
                 className={`text-center text-[11px] sm:text-xs mt-2 flex items-center justify-center gap-1.5 ${

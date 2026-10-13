@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { BANNER_TOP_ROUTES } from "@/data/routes";
+import type { RouteItem } from "@/lib/types";
 import { Package, ShieldAlert, Navigation, Sparkles } from "lucide-react";
 
-export function PriceBannerSection() {
+export function PriceBannerSection({ routes }: { routes: RouteItem[] }) {
   return (
     <section className="relative w-full overflow-hidden bg-slate-900 text-white border-b border-sky-950">
       {/* Background Image Banner (Optimized WebP for fast LCP) */}
@@ -46,17 +46,15 @@ export function PriceBannerSection() {
                 <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300" />
                 Cao Tốc 2 Chiều • Đưa Đón Tận Nơi 24/7
               </span>
-              <h2 className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight text-white uppercase drop-shadow-md leading-tight">
+              <p className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-black tracking-tight text-white uppercase drop-shadow-md leading-tight">
                 BẢNG GIÁ CÁC TUYẾN CHÍNH
-              </h2>
+              </p>
             </div>
 
             {/* Lưới các tuyến: 2 cột gọn gàng ngay trên mobile để giảm 50% chiều dài */}
             <div className="grid grid-cols-2 gap-1.5 sm:gap-2.5 w-full">
-              {BANNER_TOP_ROUTES.map((route, idx) => {
-                const isLastOdd =
-                  idx === BANNER_TOP_ROUTES.length - 1 &&
-                  BANNER_TOP_ROUTES.length % 2 !== 0;
+              {routes.map((route, idx) => {
+                const isLastOdd = idx === routes.length - 1 && routes.length % 2 !== 0;
 
                 return (
                   <Link
@@ -71,7 +69,7 @@ export function PriceBannerSection() {
                         {idx + 1}
                       </span>
                       <span className="text-[11px] sm:text-[13px] font-bold text-white group-hover:text-amber-300 transition-colors truncate">
-                        {route.name}
+                        {route.bannerLabel ?? route.name}
                       </span>
                     </div>
                     <Navigation className="hidden sm:block w-3.5 h-3.5 text-sky-300 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0" />

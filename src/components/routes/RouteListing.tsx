@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { POPULAR_ROUTES } from "@/data/routes";
+import type { RouteItem } from "@/lib/types";
 import { RoutePricingCard } from "@/components/home/RoutePricingGrid";
 
 const REGIONS = [
@@ -13,13 +13,13 @@ const REGIONS = [
   "Bắc Ninh – Bắc Giang",
 ];
 
-export function RouteListing() {
+export function RouteListing({ routes }: { routes: RouteItem[] }) {
   const [activeTab, setActiveTab] = useState("Tất cả");
 
   const filteredRoutes =
     activeTab === "Tất cả"
-      ? POPULAR_ROUTES
-      : POPULAR_ROUTES.filter((r) => r.regions.includes(activeTab));
+      ? routes
+      : routes.filter((r) => r.regions.includes(activeTab));
 
   return (
     <div className="space-y-10">

@@ -34,12 +34,15 @@ export const COMPANY_INFO = {
   domainName: "xegheplientinh.vn",
   fanpage: "Xe Ghép Bắc Giang - Bắc Ninh - Hải Phòng",
   fanpageUrl: "https://www.facebook.com/xeghepbacgiangbacninhhaiphong",
-  topBannerLine1: "XE GHÉP: MÓNG CÁI - HẠ LONG - HẢI PHÒNG - BẮC NINH - BẮC GIANG - HÀ NỘI",
+  topBannerLine1:
+    "XE GHÉP: MÓNG CÁI - HẠ LONG - HẢI PHÒNG - BẮC NINH - BẮC GIANG - HÀ NỘI",
   topBannerLine2: "ĐẶT XE LIÊN HỆ NGAY: 0962.298.293",
   coverage: "Móng Cái – Hạ Long – Hải Phòng – Bắc Ninh – Bắc Giang – Hà Nội",
   workingHours: "Phục vụ 24/7 (Cả ngày lẫn đêm, các ngày lễ tết)",
-  fleetDescription: "100% xe riêng đời mới 4, 5, 7 chỗ, điều hòa mát lạnh, sạch sẽ, bảo dưỡng định kỳ",
-  bookingPromise: "Giá rõ ràng đã bao gồm cầu đường bến bãi – Đưa đón tận nhà – Miễn phí hủy chuyến",
+  fleetDescription:
+    "100% xe riêng đời mới 4, 5, 7 chỗ, điều hòa mát lạnh, sạch sẽ, bảo dưỡng định kỳ",
+  bookingPromise:
+    "Giá rõ ràng đã bao gồm cầu đường bến bãi – Đưa đón tận nhà – Miễn phí hủy chuyến",
   summary:
     "Dịch vụ xe ghép, xe tiện chuyến Móng Cái, Hạ Long, Hải Phòng, Hà Nội, Bắc Ninh, Bắc Giang. Xe chạy thẳng, nhanh, giá rõ ràng, đón trả tận nơi, phục vụ 24/7.",
 };
@@ -95,13 +98,15 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
   {
     id: "tien-mat",
     title: "Tiền mặt trực tiếp",
-    description: "Thanh toán bằng tiền mặt cho tài xế sau khi chuyến đi hoàn thành an toàn.",
+    description:
+      "Thanh toán bằng tiền mặt cho tài xế sau khi chuyến đi hoàn thành an toàn.",
     iconName: "Banknote",
   },
   {
     id: "chuyen-khoan",
     title: "Chuyển khoản trực tuyến",
-    description: "Chuyển khoản qua Internet Banking / quét mã QR sau chuyến đi hoặc khi đặt cọc bao xe.",
+    description:
+      "Chuyển khoản qua Internet Banking / quét mã QR sau chuyến đi hoặc khi đặt cọc bao xe.",
     iconName: "CreditCard",
   },
 ];

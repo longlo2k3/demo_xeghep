@@ -7,6 +7,7 @@ import { FloatingContact } from "@/components/layout/FloatingContact";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildGlobalBusinessSchema } from "@/lib/schema";
 import { SITE_DOMAIN, BRAND_NAME } from "@/lib/seo";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 
 const fontSans = Be_Vietnam_Pro({
   weight: ["400", "600", "700", "900"],
@@ -51,16 +52,24 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icon.svg",
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const globalSchema = buildGlobalBusinessSchema();
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const globalSchema = buildGlobalBusinessSchema(companySettings);
 
   return (
     <html lang="vi" className={fontSans.variable}>
@@ -69,12 +78,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased text-slate-900 bg-white selection:bg-red-100 selection:text-red-900">
         <JsonLd data={globalSchema} />
-        <Header />
+        <Header routes={routes} companyInfo={companySettings.info} />
         <main id="main-content" className="flex-grow">
           {children}
         </main>
-        <Footer />
-        <FloatingContact />
+        <Footer companyInfo={companySettings.info} />
+        <FloatingContact companyInfo={companySettings.info} />
       </body>
     </html>
   );

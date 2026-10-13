@@ -116,3 +116,74 @@
   - Vitest: 14/14 tests passed (`npm test`).
   - Next.js Production Build: 26 static SSG pages successfully prerendered with exit code 0 (`npm run build`).
   - Zero TypeScript errors, zero lint warnings. All SEO canonicals, schemas, titles, descriptions comply with `AGENTS.md` v2.0.0.
+
+---
+
+## 2026-10-10 · Feature 002-connect-backend-api (Session này)
+
+### Phase 0: Session Recovery & Khảo sát hiện trạng (Gate G0)
+- Kiểm tra môi trường: Backend Payload CMS 3 (:3001) hoạt động với PostgreSQL (`cms-db`).
+- Khảo sát branch `feat/cms-api` trong `TestSEO`:
+  - 15/15 tests trong `tests/` pass.
+  - `npx tsc --noEmit` báo 3 lỗi tại `src/components/booking/BookingForm.tsx` (dòng 401 & 826: `Cannot find name 'estimatedPrice'`).
+  - `src/lib/api.ts` (757 dòng), `src/lib/booking.ts`, `src/lib/redirects.ts`, `src/lib/revalidate.ts`, `src/middleware.ts` đã scaffold đầy đủ.
+  - Các trang công khai (`/`, `/tuyen-lien-tinh`, `layout.tsx`) đã chuyển đổi sang `getRoutes()`.
+- Ghi nhận các điểm còn dang dở: `BookingForm.tsx`, `dat-xe/thanh-cong`, `tin-tuc`, `sitemap.ts`, `next.config.ts`.
+
+### Phase 1: Specification (Gate G1)
+- Viết `.specify/specs/002-connect-backend-api/spec.md`: 4 User Stories (US-1..US-4) định dạng Given-When-Then, phạm vi in-scope/out-of-scope.
+- Viết `.specify/specs/002-connect-backend-api/plan.md`: 9 điểm Constitution Check, lộ trình T1..T6.
+- Cập nhật `task_plan.md` và `findings.md`.
+- Inline spec self-review: **PASSED** (What/How tách biệt, không sửa logic ngoài phạm vi, bảo toàn quy tắc SEO).
+- Đang chờ người dùng xác nhận Gate G1 để chuyển sang Phase 4 (Implementation).
+
+### Phase 4: Implementation & Verification (Gate G4)
+- **T1: Sửa BookingForm.tsx**: Sửa triệt để 2 chỗ dùng `estimatedPrice.price` và `estimatedPrice.unit` tại dòng 401 & 826 thành `priceDisplay` và `unitDisplay`. Thêm `disabled={submitting}` ngăn submit lặp.
+- **T2: Nối trang xác nhận `/dat-xe/thanh-cong`**: Gọi `lookupBooking(code, { token: t })` để lấy dữ liệu thực tế từ backend; hiển thị điểm trả, giờ đón, mã đơn, PII che `0962***293`. Giữ `noindex: true`.
+- **T3: Nối Tin tức CMS**:
+  - `tin-tuc/page.tsx`: Nạp `getArticles({ limit: 12 })` kèm fallback `FALLBACK_ARTICLES`.
+  - `tin-tuc/[slug]/page.tsx`: Nạp `getArticle(slug)` cho `generateMetadata` và content; SSG với `generateStaticParams`; xử lý `notFound()` chuẩn SEO.
+- **T4: Nối Sitemap động**: Gọi `getSitemapEntries()` lấy 20 canonical URLs đã sanitize từ CMS.
+- **T5: Remote Patterns**: Thêm `localhost:3001`, `127.0.0.1:3001`, `xegheplientinh.vn` vào `next.config.ts`.
+- **T6: Verification Evidence**:
+  - `npx tsc --noEmit` -> Exit code 0 (0 error).
+  - `npm test` -> 4 files, 15/15 tests PASSED (exit code 0).
+  - `npm run build` -> Next.js 15.5 compiled successfully, 26 static/SSG pages prerendered, 0 lỗi runtime.
+
+**GATE G4 ACCEPTED — HOÀN THÀNH KẾT NỐI TESTSEO VỚI BACKEND PAYLOAD CMS 3.**
+
+---
+
+### Phase 6: SEO Audit & Performance Optimization per AGENTS.md (2026-10-11)
+- **Rà soát 16 mục trong AGENTS.md**:
+  - `robots.ts`: Gỡ bỏ `/dat-xe/thanh-cong` khỏi `disallow` (do trang đã có `noindex: true`, vi phạm Rule 1.5). Thêm chặn toàn bộ `disallow: /` trên môi trường không phải production (Rule 14.1).
+  - `src/lib/schema.ts`: Bổ sung `@context: "https://schema.org"` cho `buildBreadcrumbSchema` (Rule 7.1).
+  - `src/app/sitemap.ts`: Bổ sung `getRoutes({ fields: "slug" })` vào danh sách fallback, đảm bảo 20 URLs luôn sẵn sàng (Rule 9.2).
+  - Thứ tự Heading (Rule 3.2):
+    - `PriceBannerSection.tsx`: Chuyển `<h2>` thành `<p>` có style đồng bộ để tránh H2 xuất hiện trước H1 ở `HeroSection`.
+    - `src/app/tuyen-lien-tinh/page.tsx`: Nâng `<h3>` cam kết chung lên `<h2>` để không nhảy cấp sau `<h1>`.
+    - `src/app/tin-tuc/page.tsx`: Bổ sung `<h2>` tiêu đề mục bài viết khác và chuyển tiêu đề sidebar sang `<h2>`.
+  - Bảo mật & Hiệu suất (Rule 13.2 & Rule 6.5): Bổ sung `Strict-Transport-Security` và `X-Frame-Options` trong `next.config.ts`.
+  - Icon & Brand (Rule 1.7): Tạo `public/icon.svg` (512x512) và khai báo `apple-touch-icon`. Sửa lỗi copy thương hiệu cũ "Xe Ghép Lubi" thành `{BRAND_NAME}` trong `not-found.tsx`.
+  - Test Suite: Bổ sung `vitest.config.ts` để alias `@/` hoạt động ổn định; thêm test case cho `robots.ts` và breadcrumbs `@context`. 4 test files, 16/16 tests PASSED.
+  - Build Check: `npm run build` compiled trong 8.7s, prerender thành công 26 static/SSG routes (exit code 0).
+
+---
+
+### Phase 7: Dynamic Company Settings API Integration (`/api/v1/settings/company`) (2026-10-11)
+- **Mục tiêu**: Kết nối API `company_settings` từ Payload CMS 3 cho toàn bộ ứng dụng frontend thay vì hardcode thông tin liên hệ / cam kết, kèm cơ chế fallback `FALLBACK_COMPANY_SETTINGS` fail-open tuyệt đối an toàn.
+- **Thực hiện**:
+  1. `src/lib/api.ts`: Bổ sung `FALLBACK_COMPANY_SETTINGS`, bọc `try/catch` fail-open trong `getCompanySettings()`, xuất khẩu helper `getCompanyInfo()`.
+  2. `src/lib/schema.ts`: Cập nhật `buildGlobalBusinessSchema(settings?: CompanySettingsData)` nhận động hotline, tên công ty, địa chỉ, working hours, geo coordinates từ CMS.
+  3. `src/app/layout.tsx`: Nạp `Promise.all([getCompanySettings(), getRoutes()])` và phân phối `companyInfo={companySettings.info}` cho `Header`, `Footer`, `FloatingContact`, và Schema markup.
+  4. Nối động `companyInfo` và `commitments` vào các components:
+     - `Header.tsx`, `TopBanner.tsx`, `Footer.tsx`, `FloatingContact.tsx`, `HeroSection.tsx`, `BookingForm.tsx`, `AboutWhyChooseUs.tsx`.
+  5. Nối động vào toàn bộ các trang:
+     - `src/app/page.tsx`, `src/app/gioi-thieu/page.tsx`, `src/app/lien-he/page.tsx`, `src/app/dat-xe/page.tsx`, `src/app/dat-xe/thanh-cong/page.tsx`, `src/app/not-found.tsx`, `src/app/tuyen-lien-tinh/page.tsx`, `src/app/tuyen-lien-tinh/[slug]/page.tsx`, `src/app/tin-tuc/page.tsx`, `src/app/tin-tuc/[slug]/page.tsx`, `src/app/chinh-sach/thanh-toan/page.tsx`, `src/app/chinh-sach/bao-mat/page.tsx`, `src/app/chinh-sach/dam-bao/page.tsx`.
+  6. Xử lý Vitest trên Windows Node v24: Cấu hình `poolOptions: { forks: { singleFork: true } }` trong `vitest.config.ts`.
+  7. Verification:
+     - `npx tsc --noEmit` -> 0 lỗi (Exit code 0).
+     - `npm test` -> 4/4 test files, 17/17 tests PASSED (Exit code 0).
+     - `npm run build` -> Next.js 15.5 compiled trong 13.1s, 26/26 static/SSG pages prerendered (Exit code 0).
+
+

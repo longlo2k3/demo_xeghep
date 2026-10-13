@@ -4,7 +4,12 @@ import Link from "next/link";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { POPULAR_ROUTES } from "@/data/routes";
+import {
+  getRoute,
+  getRoutes,
+  getCompanySettings,
+  isNotFoundError,
+} from "@/lib/api";
 import { COMPANY_INFO } from "@/data/company-info";
 import { buildRouteServiceSchema } from "@/lib/schema";
 import { BookingForm } from "@/components/booking/BookingForm";
@@ -26,9 +31,12 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-// SSG Pre-rendering for all 9 routes
+export const revalidate = 60;
+
+// SSG Pre-rendering for all routes
 export async function generateStaticParams() {
-  return POPULAR_ROUTES.map((route) => ({
+  const routes = await getRoutes({ fields: "slug" });
+  return routes.map((route) => ({
     slug: route.slug,
   }));
 }
@@ -36,24 +44,39 @@ export async function generateStaticParams() {
 // Next.js 15+ generateMetadata with awaited params
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const route = POPULAR_ROUTES.find((r) => r.slug === slug);
 
-  if (!route) return {};
+  try {
+    const route = await getRoute(slug);
 
-  return constructMetadata({
-    title: `Xe Ghép ${route.name} - Giá Từ ${route.priceShare1Text}`,
-    description: `Dịch vụ xe tiện chuyến và xe ghép ${route.name} đón trả tận nhà. Giá ghép chỉ từ ${route.priceShare1Text}, bao xe riêng chỉ từ ${route.priceCharter4to5Text}. Xe đời mới, phục vụ 24/7.`,
-    path: `/tuyen-lien-tinh/${route.slug}`,
-  });
+    return constructMetadata({
+      title: `Xe Ghép ${route.name} - Giá Từ ${route.priceShare1Text}`,
+      description: `Dịch vụ xe tiện chuyến và xe ghép ${route.name} đón trả tận nhà. Giá ghép chỉ từ ${route.priceShare1Text}, bao xe riêng chỉ từ ${route.priceCharter4to5Text}. Xe đời mới, phục vụ 24/7.`,
+      path: `/tuyen-lien-tinh/${route.slug}`,
+    });
+  } catch (error) {
+    if (isNotFoundError(error)) return {};
+    throw error;
+  }
 }
 
 export default async function RouteDetailPage({ params }: Props) {
   const { slug } = await params;
-  const route = POPULAR_ROUTES.find((r) => r.slug === slug);
 
-  if (!route) {
-    notFound(); // True HTTP 404 per AGENTS.md rule 4.4 & 14.1
+  let route;
+  try {
+    route = await getRoute(slug);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      notFound(); // True HTTP 404 per AGENTS.md rule 4.4 & 14.1
+    }
+    throw error;
   }
+
+  const [routes, companySettings] = await Promise.all([
+    getRoutes(),
+    getCompanySettings(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
 
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
@@ -70,9 +93,9 @@ export default async function RouteDetailPage({ params }: Props) {
     path: `/tuyen-lien-tinh/${route.slug}`,
   });
 
-  const relatedRoutes = POPULAR_ROUTES.filter(
-    (r) => r.slug !== route.slug,
-  ).slice(0, 3);
+  const relatedRoutes = route.relatedRoutes.length
+    ? route.relatedRoutes
+    : routes.filter((r) => r.slug !== route.slug).slice(0, 3);
 
   return (
     <>
@@ -129,14 +152,14 @@ export default async function RouteDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* Nút "GỌI NGAY: 0962.298.293" */}
+                {/* Nút "GỌI NGAY: ..." */}
                 <div className="pt-2 flex flex-wrap gap-3">
                   <a
-                    href={COMPANY_INFO.hotlineHref}
+                    href={info.hotlineHref}
                     className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black text-sm sm:text-base shadow-lg shadow-red-600/30 transition-all hover:scale-105"
                   >
                     <PhoneCall className="w-5 h-5 animate-pulse" />
-                    <span>GỌI NGAY: {COMPANY_INFO.hotline}</span>
+                    <span>GỌI NGAY: {info.hotline}</span>
                   </a>
 
                   <a
@@ -172,14 +195,20 @@ export default async function RouteDetailPage({ params }: Props) {
                   <tr className="bg-slate-100 text-slate-900 font-extrabold border-b border-slate-200 text-xs sm:text-sm">
                     <th className="py-3 px-3 sm:py-3.5 sm:px-4">
                       <span className="sm:hidden">Loại hình DV</span>
-                      <span className="hidden sm:inline">Loại Hình Dịch Vụ</span>
+                      <span className="hidden sm:inline">
+                        Loại Hình Dịch Vụ
+                      </span>
                     </th>
-                    <th className="py-3.5 px-4 hidden sm:table-cell">Đặc Điểm & Số Lượng</th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">
+                      Đặc Điểm & Số Lượng
+                    </th>
                     <th className="py-3 px-3 sm:py-3.5 sm:px-4 text-right sm:text-left">
                       <span className="sm:hidden">Giá</span>
                       <span className="hidden sm:inline">Mức Giá Niêm Yết</span>
                     </th>
-                    <th className="py-3.5 px-4 hidden sm:table-cell">Chính Sách Đón Trả</th>
+                    <th className="py-3.5 px-4 hidden sm:table-cell">
+                      Chính Sách Đón Trả
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -244,29 +273,38 @@ export default async function RouteDetailPage({ params }: Props) {
                 <MapPin className="w-5 h-5 text-red-600" />
                 <span>Khu Vực Đón & Trả Khách Tuyến {route.name}</span>
               </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
+                {/* Điểm đón */}
+                <section aria-labelledby="pickup-heading">
+                  <h3
+                    id="pickup-heading"
+                    className="mb-3 font-bold text-slate-900"
+                  >
+                    Điểm đón thuận tiện
+                  </h3>
 
-              <div className="space-y-4 text-sm text-slate-600">
-                <div>
-                  <strong className="text-slate-900 block mb-1">
-                    Điểm đón thuận tiện:
-                  </strong>
-                  <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm">
-                    {route.pickups.map((p, i) => (
-                      <li key={i}>{p}</li>
+                  <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed sm:text-sm">
+                    {route.pickups.map((pickup, index) => (
+                      <li key={`${pickup}-${index}`}>{pickup}</li>
                     ))}
                   </ul>
-                </div>
+                </section>
 
-                <div className="pt-2 border-t border-slate-100">
-                  <strong className="text-slate-900 block mb-1">
-                    Điểm trả tận nơi:
-                  </strong>
-                  <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm">
-                    {route.dropoffs.map((d, i) => (
-                      <li key={i}>{d}</li>
+                {/* Điểm trả */}
+                <section aria-labelledby="dropoff-heading">
+                  <h3
+                    id="dropoff-heading"
+                    className="mb-3 font-bold text-slate-900"
+                  >
+                    Điểm trả tận nơi
+                  </h3>
+
+                  <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed sm:text-sm">
+                    {route.dropoffs.map((dropoff, index) => (
+                      <li key={`${dropoff}-${index}`}>{dropoff}</li>
                     ))}
                   </ul>
-                </div>
+                </section>
               </div>
             </div>
 
@@ -302,11 +340,11 @@ export default async function RouteDetailPage({ params }: Props) {
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Tuyến xe ghép <strong>{route.name}</strong> là dịch vụ tiện chuyến
-              chất lượng cao của {COMPANY_INFO.name}, đáp ứng nhu cầu đi lại
-              công tác, thăm người thân, khám chữa bệnh và du lịch. Thay vì phải
-              di chuyển ra bến xe và chờ đợi xe khách đông đúc, quý khách chỉ
-              cần ngồi tại nhà, tài xế sẽ đến tận cửa đón đúng giờ và đưa quý
-              khách đến chính xác địa chỉ cần tới.
+              chất lượng cao của {info.name}, đáp ứng nhu cầu đi lại công tác,
+              thăm người thân, khám chữa bệnh và du lịch. Thay vì phải di chuyển
+              ra bến xe và chờ đợi xe khách đông đúc, quý khách chỉ cần ngồi tại
+              nhà, tài xế sẽ đến tận cửa đón đúng giờ và đưa quý khách đến chính
+              xác địa chỉ cần tới.
             </p>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Toàn bộ các xe phục vụ tuyến đều là xe đời mới (sedan 4-5 chỗ và
@@ -375,6 +413,8 @@ export default async function RouteDetailPage({ params }: Props) {
             {/* BookingForm: Điền sẵn Điểm đón / Điểm đến theo tuyến per spec_v2.md 5.2 */}
             <div className="max-w-4xl mx-auto">
               <BookingForm
+                routes={routes}
+                companyInfo={info}
                 initialOrigin={route.origin}
                 initialDestination={route.destination}
                 initialRouteSlug={route.slug}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { BookingForm } from "@/components/booking/BookingForm";
+import { getRoutes, getCompanySettings } from "@/lib/api";
 import { ShieldCheck, Clock, Phone, Users } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
 
@@ -12,7 +13,13 @@ export const metadata: Metadata = constructMetadata({
   path: "/dat-xe",
 });
 
-export default function BookingPage() {
+export default async function BookingPage() {
+  const [companySettings, routes] = await Promise.all([
+    getCompanySettings(),
+    getRoutes(),
+  ]);
+  const info = companySettings.info ?? COMPANY_INFO;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Đặt xe", path: "/dat-xe" },
@@ -32,7 +39,7 @@ export default function BookingPage() {
               Đặt Xe Trực Tuyến
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-              Điền thông tin chuyến đi dưới đây để tổng đài xếp xe gần nhất đón quý khách. Hoặc liên hệ trực tiếp hotline {COMPANY_INFO.hotline}.
+              Điền thông tin chuyến đi dưới đây để tổng đài xếp xe gần nhất đón quý khách. Hoặc liên hệ trực tiếp hotline {info.hotline}.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 pt-2 text-xs text-slate-600">
@@ -51,7 +58,11 @@ export default function BookingPage() {
             </div>
           </div>
 
-          <BookingForm title="THÔNG TIN ĐẶT CHUYẾN" />
+          <BookingForm
+            title="THÔNG TIN ĐẶT CHUYẾN"
+            routes={routes}
+            companyInfo={info}
+          />
         </div>
       </div>
     </>

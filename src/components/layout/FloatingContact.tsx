@@ -1,12 +1,19 @@
 import { Phone } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
+import type { CompanyInfoData } from "@/lib/api";
 
-export function FloatingContact() {
+export function FloatingContact({
+  companyInfo = COMPANY_INFO,
+}: {
+  companyInfo?: CompanyInfoData;
+}) {
+  const info = companyInfo ?? COMPANY_INFO;
+
   return (
     <div className="fixed bottom-6 right-4 sm:right-6 z-50 flex flex-col items-center gap-3 sm:gap-3.5">
       {/* Nút nổi Zalo */}
       <a
-        href={COMPANY_INFO.zaloHref}
+        href={info.zaloHref}
         target="_blank"
         rel="noopener noreferrer"
         className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#0068FF] text-white shadow-xl shadow-blue-600/30 hover:bg-[#0052cc] hover:scale-110 active:scale-95 transition-all duration-200 group"
@@ -29,9 +36,9 @@ export function FloatingContact() {
 
       {/* Nút nổi Gọi điện (chuyển sang thay thế thanh hotline dài cũ) */}
       <a
-        href={COMPANY_INFO.hotlineHref}
+        href={info.hotlineHref}
         className="relative flex items-center justify-center w-14 h-14 rounded-full bg-red-600 text-white shadow-xl shadow-red-600/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all duration-200 group"
-        aria-label={`Gọi điện ngay ${COMPANY_INFO.hotline}`}
+        aria-label={`Gọi điện ngay ${info.hotline}`}
       >
         {/* Ripple animation rings */}
         <span
@@ -39,11 +46,11 @@ export function FloatingContact() {
           aria-hidden="true"
         />
         <Phone className="w-6 h-6 animate-pulse" aria-hidden="true" />
-        <span className="sr-only">Gọi ngay {COMPANY_INFO.hotline}</span>
+        <span className="sr-only">Gọi ngay {info.hotline}</span>
 
         {/* Tooltip desktop */}
         <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-slate-900/90 text-white text-xs font-bold shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none hidden sm:block">
-          Gọi: {COMPANY_INFO.hotline}
+          Gọi: {info.hotline}
         </span>
       </a>
     </div>

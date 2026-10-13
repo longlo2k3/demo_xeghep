@@ -26,6 +26,53 @@ describe("Schema.org JSON-LD Builders", () => {
     expect(website?.url).toBe(SITE_DOMAIN);
   });
 
+  it("buildGlobalBusinessSchema dynamically uses custom companySettings when provided", () => {
+    const customSettings = {
+      info: {
+        name: "Công Ty Vận Tải VIP",
+        brandName: "Xe Ghép VIP",
+        hotline: "0988.111.222",
+        hotlineRaw: "0988111222",
+        hotlineHref: "tel:0988111222",
+        zaloHref: "https://zalo.me/0988111222",
+        smsHref: "sms:0988111222",
+        email: "vip@example.com",
+        website: "https://xegheplientinh.vn",
+        domainName: "xegheplientinh.vn",
+        fanpage: "Xe Ghép VIP",
+        fanpageUrl: "https://facebook.com/xeghepvip",
+        topBannerLine1: "BANNER 1",
+        topBannerLine2: "BANNER 2",
+        coverage: "Hà Nội - Hải Phòng",
+        workingHours: "24/7",
+        fleetDescription: "Xe VIP",
+        bookingPromise: "Đón tận nơi",
+        summary: "Dịch vụ xe ghép cao cấp",
+      },
+      address: "123 Lê Chân",
+      mapEmbedUrl: null,
+      latitude: null,
+      longitude: null,
+      secondaryPhone: null,
+      areaServed: [{ type: "City", name: "Hải Phòng" }],
+      priceRange: "200.000đ - 1.000.000đ",
+      commitments: [],
+      paymentMethods: [],
+      testimonials: [],
+    };
+
+    const schema = buildGlobalBusinessSchema(customSettings);
+    const graph = schema["@graph"];
+    const org = graph.find((item) => item["@type"] === "Organization");
+    const taxiService = graph.find((item) => item["@type"] === "TaxiService");
+
+    expect(org?.name).toBe("Công Ty Vận Tải VIP");
+    expect(org?.alternateName).toBe("Xe Ghép VIP");
+    expect(taxiService?.telephone).toBe("+84988111222");
+    expect(taxiService?.priceRange).toBe("200.000đ - 1.000.000đ");
+    expect(taxiService?.areaServed).toEqual([{ "@type": "City", name: "Hải Phòng" }]);
+  });
+
   it("buildBreadcrumbSchema creates valid BreadcrumbList", () => {
     const breadcrumbs = buildBreadcrumbSchema([
       { name: "Trang chủ", path: "/" },
@@ -33,6 +80,7 @@ describe("Schema.org JSON-LD Builders", () => {
       { name: "Hải Phòng - Hà Nội", path: "/tuyen-lien-tinh/hai-phong-ha-noi-noi-bai" },
     ]);
 
+    expect(breadcrumbs["@context"]).toBe("https://schema.org");
     expect(breadcrumbs["@type"]).toBe("BreadcrumbList");
     expect(breadcrumbs.itemListElement).toHaveLength(3);
     expect(breadcrumbs.itemListElement[0].position).toBe(1);

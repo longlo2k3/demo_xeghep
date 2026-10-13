@@ -2,6 +2,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Phone, Star, ShieldCheck, CheckCircle2, Award, Zap } from "lucide-react";
 import { COMPANY_INFO } from "@/data/company-info";
+import type { CompanyInfoData } from "@/lib/api";
+import type { RouteItem } from "@/lib/types";
 
 const BookingForm = dynamic(
   () => import("@/components/booking/BookingForm").then((mod) => mod.BookingForm),
@@ -17,7 +19,15 @@ const BookingForm = dynamic(
   }
 );
 
-export function HeroSection() {
+export function HeroSection({
+  routes,
+  companyInfo = COMPANY_INFO,
+}: {
+  routes: RouteItem[];
+  companyInfo?: CompanyInfoData;
+}) {
+  const info = companyInfo ?? COMPANY_INFO;
+
   return (
     <section className="relative bg-gradient-to-b from-slate-900 via-slate-900/95 to-slate-950 text-white py-10 sm:py-14 lg:py-16 overflow-hidden border-b border-slate-800">
       {/* Background Car Image + Soft Lighter Overlay (Lazy loaded to avoid competing with LCP) */}
@@ -80,12 +90,12 @@ export function HeroSection() {
             {/* CTA Hotline Button per spec_v2.md */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black text-sm sm:text-base shadow-xl shadow-red-600/30 transition-all hover:scale-105 cursor-pointer border border-red-500/50"
-                aria-label={`Gọi ngay ${COMPANY_INFO.hotline}`}
+                aria-label={`Gọi ngay ${info.hotline}`}
               >
                 <Phone className="w-4 h-4 animate-pulse" aria-hidden="true" />
-                <span>HOTLINE 24/7: {COMPANY_INFO.hotline}</span>
+                <span>HOTLINE 24/7: {info.hotline}</span>
               </a>
             </div>
 
@@ -112,7 +122,7 @@ export function HeroSection() {
 
           {/* Right Column: Embedded Booking Form */}
           <div className="lg:col-span-6 xl:col-span-5 w-full">
-            <BookingForm compact />
+            <BookingForm compact routes={routes} companyInfo={info} />
           </div>
         </div>
       </div>

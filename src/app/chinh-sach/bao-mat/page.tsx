@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { constructMetadata } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { COMPANY_INFO } from "@/data/company-info";
+import { getCompanySettings } from "@/lib/api";
 import { Lock, ShieldCheck, EyeOff, FileText, Phone } from "lucide-react";
 
 export const metadata: Metadata = constructMetadata({
@@ -11,7 +12,10 @@ export const metadata: Metadata = constructMetadata({
   path: "/chinh-sach/bao-mat",
 });
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const companySettings = await getCompanySettings();
+  const info = companySettings.info ?? COMPANY_INFO;
+
   const breadcrumbs = [
     { name: "Trang chủ", path: "/" },
     { name: "Chính sách bảo mật", path: "/chinh-sach/bao-mat" },
@@ -31,7 +35,7 @@ export default function PrivacyPolicyPage() {
               Chính Sách Bảo Mật Thông Tin
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
-              {COMPANY_INFO.name} tôn trọng và cam kết bảo vệ quyền riêng tư cũng như dữ liệu cá nhân của quý khách hàng.
+              {info.name} tôn trọng và cam kết bảo vệ quyền riêng tư cũng như dữ liệu cá nhân của quý khách hàng.
             </p>
           </div>
 
@@ -87,7 +91,7 @@ export default function PrivacyPolicyPage() {
                 <span>4. Quyền Yêu Cầu Xóa Dữ Liệu Của Khách Hàng</span>
               </h2>
               <p>
-                Bất kỳ lúc nào sau khi chuyến đi kết thúc, quý khách có quyền yêu cầu xóa bỏ toàn bộ lịch sử thông tin chuyến đi và số điện thoại khỏi hệ thống tổng đài bằng cách gọi trực tiếp đến hotline <strong>{COMPANY_INFO.hotline}</strong> hoặc gửi email tới <strong>{COMPANY_INFO.email}</strong>.
+                Bất kỳ lúc nào sau khi chuyến đi kết thúc, quý khách có quyền yêu cầu xóa bỏ toàn bộ lịch sử thông tin chuyến đi và số điện thoại khỏi hệ thống tổng đài bằng cách gọi trực tiếp đến hotline <strong>{info.hotline}</strong> hoặc gửi email tới <strong>{info.email}</strong>.
               </p>
             </section>
 
@@ -96,11 +100,11 @@ export default function PrivacyPolicyPage() {
                 Thắc mắc về quyền riêng tư? Liên hệ tổng đài 24/7.
               </p>
               <a
-                href={COMPANY_INFO.hotlineHref}
+                href={info.hotlineHref}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800"
               >
                 <Phone className="w-3.5 h-3.5 text-red-400" />
-                <span>{COMPANY_INFO.hotline}</span>
+                <span>{info.hotline}</span>
               </a>
             </div>
           </div>
